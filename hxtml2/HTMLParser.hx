@@ -23,22 +23,22 @@ class HTMLParser
 		_cssParser = new CSSParser();
 	}
 	/**
-	 * 
+	 * parse all the DOM nodes and create the DOM elements
 	 */
 	public function parse(htmlDOM:Xml):HTMLPageData
 	{
 		// init the page data
 		var htmlPageData = new HTMLPageData(_cssParser);
 		// create the DOM
-		doParse(htmlDOM, htmlPageData);
+		_doParse(htmlDOM, htmlPageData);
 		return htmlPageData;
 	}
 	/**
-	 * 
+	 * recursively parse all the DOM nodes and create the DOM elements
 	 */
-	function doParse(htmlDOM:Xml, htmlPageData:HTMLPageData, parent:Dynamic = null)
+	private function _doParse(htmlDOM:Xml, htmlPageData:HTMLPageData, parent:Dynamic = null)
 	{
-		trace("doParse " + htmlDOM);
+		trace("_doParse " + htmlDOM);
 
 		var element:Dynamic = null;
 
@@ -55,9 +55,8 @@ class HTMLParser
 				return ;
 		}
 
-		//trace("doParse " + htmlDOM.nodeName +"("+htmlDOM.nodeType+"), " + htmlPageData +" , "+ parent + ")");
+		//trace("_doParse " + htmlDOM.nodeName +"("+htmlDOM.nodeType+"), " + htmlPageData +" , "+ parent + ")");
 
-		var allowSpaces = true, allowComments = false;
 		var elementType:ElementTypeValue = unknown;
 		try
 		{
@@ -72,33 +71,28 @@ class HTMLParser
 		switch(elementType) 
 		{
 			case head, link, meta, title:
-//				allowSpaces = false;
-//				d = new DomHidden(this, name);
 			case html:
-//				allowSpaces = false;
-//				d = new Dom(this, name);
 			case style:
-//				d = new DomStyle(this, name);
-//				allowComments = true;
+				// to do : load a style sheet or parse the css styles
 			default:
 				// convert the attributes iterator in a hash table for ease of use
 				var attributesHash:Hash<String> = new Hash();
 				for(attr in htmlDOM.attributes())
 				{
+//					attributesHash.set(attr, _cssParser.getValueFromString(attr, htmlDOM.get(attr)));
 					attributesHash.set(attr, htmlDOM.get(attr));
 				}
 				element = htmlPageData.createElement(elementType, attributesHash, parent, htmlDOM.nodeName);
 		}
 		// build children
-//		var prev:Dynamic = null;
 		var hasText = false;
 		for( child in htmlDOM ) 
 		{
 			// remove empty texts
 			if(child.nodeType ==Xml.PCData && ~/^[ \n\r\t]*$/.match(child.nodeValue) ) 
 					continue;
-
-			doParse(child, htmlPageData, element);
+			// recusrsive call 
+			_doParse(child, htmlPageData, element);
 		}
 	}
 }

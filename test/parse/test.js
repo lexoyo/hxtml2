@@ -2268,8 +2268,7 @@ cocktailCore.style.abstract.AbstractContainerStyle.prototype.flowChildren = func
 	var childrenContainingDOMElementFontMetricsData = this.getFontMetricsData();
 	var childLastPositionedDOMElementData;
 	childLastPositionedDOMElementData = this.getChildLastPositionedDOMElementData(lastPositionedDOMElementData);
-	this.doFlowChildren(childrenContainingDOMElementData,viewportData,childLastPositionedDOMElementData,childrenContainingDOMElementFontMetricsData,childrenFormattingContext);
-	if(childrenFormattingContext != formatingContext) childrenFormattingContext.destroy();
+	this.doFlowChildren(childrenContainingDOMElementData,viewportData,childLastPositionedDOMElementData,childrenContainingDOMElementFontMetricsData,childrenFormattingContext,formatingContext);
 	if(this._width == cocktail.style.DimensionStyleValue.autoValue) {
 		var currentWidth = this._computedStyle.width;
 		this._computedStyle.width = this.shrinkToFitIfNeeded(containingDOMElementData,childrenFormattingContext.getFlowData().maxWidth);
@@ -2277,7 +2276,7 @@ cocktailCore.style.abstract.AbstractContainerStyle.prototype.flowChildren = func
 			childrenFormattingContext = this.getFormatingContext(formatingContext);
 			childrenContainingDOMElementData = this.getContainerDOMElementData();
 			childLastPositionedDOMElementData = this.getChildLastPositionedDOMElementData(lastPositionedDOMElementData);
-			this.doFlowChildren(childrenContainingDOMElementData,viewportData,childLastPositionedDOMElementData,childrenContainingDOMElementFontMetricsData,childrenFormattingContext);
+			this.doFlowChildren(childrenContainingDOMElementData,viewportData,childLastPositionedDOMElementData,childrenContainingDOMElementFontMetricsData,childrenFormattingContext,formatingContext);
 		}
 	}
 	if(this._height == cocktail.style.DimensionStyleValue.autoValue) this._computedStyle.height = this.applyContentHeightIfNeeded(containingDOMElementData,childrenFormattingContext.getFlowData().totalHeight);
@@ -2289,7 +2288,7 @@ cocktailCore.style.abstract.AbstractContainerStyle.prototype.flowChildren = func
 cocktailCore.style.abstract.AbstractContainerStyle.prototype.insertInFlowDOMElement = function(formattingContext) {
 	if(this.isInline() == false || this.isInlineFlow() == false) cocktailCore.style.js.Style.prototype.insertInFlowDOMElement.call(this,formattingContext);
 }
-cocktailCore.style.abstract.AbstractContainerStyle.prototype.doFlowChildren = function(childrenContainingDOMElementData,viewportData,childLastPositionedDOMElementData,childrenContainingDOMElementFontMetricsData,childrenFormattingContext) {
+cocktailCore.style.abstract.AbstractContainerStyle.prototype.doFlowChildren = function(childrenContainingDOMElementData,viewportData,childLastPositionedDOMElementData,childrenContainingDOMElementFontMetricsData,childrenFormattingContext,formattingContext) {
 	var containerDOMElement = this._domElement;
 	var _g1 = 0, _g = containerDOMElement.getChildren().length;
 	while(_g1 < _g) {
@@ -2302,6 +2301,7 @@ cocktailCore.style.abstract.AbstractContainerStyle.prototype.doFlowChildren = fu
 			this.insertTextElement(childrenTextElement,childrenFormattingContext,childrenContainingDOMElementData);
 		}
 	}
+	if(childrenFormattingContext != formattingContext) childrenFormattingContext.destroy();
 }
 cocktailCore.style.abstract.AbstractContainerStyle.prototype.doPositionAbsolutelyPositionedDOMElements = function(isFirstPositionedAncestor,childLastPositionedDOMElementData,viewportData) {
 	if(isFirstPositionedAncestor == true) {
@@ -3132,11 +3132,10 @@ cocktailCore.style.computer.BoxStylesComputer.__name__ = ["cocktailCore","style"
 cocktailCore.style.computer.BoxStylesComputer.prototype.measure = function(style,containingDOMElementData) {
 	this.measureHorizontalPaddings(style,containingDOMElementData);
 	this.measureVerticalPaddings(style,containingDOMElementData);
+	this.measureDimensionsConstraints(style,containingDOMElementData);
 	this.measureWidthAndHorizontalMargins(style,containingDOMElementData);
 	this.measureHeightAndVerticalMargins(style,containingDOMElementData);
 	this.measurePositionOffsets(style,containingDOMElementData);
-	this.measureDimensionsConstraints(style,containingDOMElementData);
-	this.constrainDimensions(style);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.shrinkToFit = function(style,containingDOMElementData,minimumWidth) {
 	return style.getComputedStyle().width;
@@ -3157,24 +3156,24 @@ cocktailCore.style.computer.BoxStylesComputer.prototype.measurePositionOffsets =
 	style.getComputedStyle().bottom = this.getComputedPositionOffset(style.getBottom(),containingDOMElementData.height,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.measureVerticalPaddings = function(style,containingDOMElementData) {
-	style.getComputedStyle().paddingTop = this.getComputedPadding(style.getPaddingTop(),containingDOMElementData.height,containingDOMElementData.isHeightAuto,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
-	style.getComputedStyle().paddingBottom = this.getComputedPadding(style.getPaddingBottom(),containingDOMElementData.height,containingDOMElementData.isHeightAuto,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
+	style.getComputedStyle().paddingTop = this.getComputedPadding(style.getPaddingTop(),containingDOMElementData.width,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
+	style.getComputedStyle().paddingBottom = this.getComputedPadding(style.getPaddingBottom(),containingDOMElementData.width,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.measureHorizontalPaddings = function(style,containingDOMElementData) {
-	style.getComputedStyle().paddingLeft = this.getComputedPadding(style.getPaddingLeft(),containingDOMElementData.width,containingDOMElementData.isWidthAuto,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
-	style.getComputedStyle().paddingRight = this.getComputedPadding(style.getPaddingRight(),containingDOMElementData.width,containingDOMElementData.isWidthAuto,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
+	style.getComputedStyle().paddingLeft = this.getComputedPadding(style.getPaddingLeft(),containingDOMElementData.width,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
+	style.getComputedStyle().paddingRight = this.getComputedPadding(style.getPaddingRight(),containingDOMElementData.width,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.measureWidthAndHorizontalMargins = function(style,containingDOMElementData) {
 	if(style.getWidth() == cocktail.style.DimensionStyleValue.autoValue) this.measureAutoWidth(style,containingDOMElementData); else this.measureWidth(style,containingDOMElementData);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.measureAutoWidth = function(style,containingDOMElementData) {
-	style.getComputedStyle().width = 0;
+	this.setComputedWidth(style,0);
 	style.getComputedStyle().marginLeft = this.getComputedMarginLeft(style,containingDOMElementData);
 	style.getComputedStyle().marginRight = this.getComputedMarginRight(style,containingDOMElementData);
-	style.getComputedStyle().width = this.getComputedAutoWidth(style,containingDOMElementData);
+	this.setComputedWidth(style,this.getComputedAutoWidth(style,containingDOMElementData));
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.measureWidth = function(style,containingDOMElementData) {
-	style.getComputedStyle().width = this.getComputedWidth(style,containingDOMElementData);
+	this.setComputedWidth(style,this.getComputedWidth(style,containingDOMElementData));
 	style.getComputedStyle().marginLeft = this.getComputedMarginLeft(style,containingDOMElementData);
 	style.getComputedStyle().marginRight = this.getComputedMarginRight(style,containingDOMElementData);
 }
@@ -3182,27 +3181,38 @@ cocktailCore.style.computer.BoxStylesComputer.prototype.measureHeightAndVertical
 	if(style.getHeight() == cocktail.style.DimensionStyleValue.autoValue) this.measureAutoHeight(style,containingDOMElementData); else this.measureHeight(style,containingDOMElementData);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.measureAutoHeight = function(style,containingDOMElementData) {
-	style.getComputedStyle().height = this.getComputedAutoHeight(style,containingDOMElementData);
+	this.setComputedHeight(style,this.getComputedAutoHeight(style,containingDOMElementData));
 	style.getComputedStyle().marginTop = this.getComputedMarginTop(style,containingDOMElementData);
 	style.getComputedStyle().marginBottom = this.getComputedMarginBottom(style,containingDOMElementData);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.measureHeight = function(style,containingDOMElementData) {
-	style.getComputedStyle().height = this.getComputedHeight(style,containingDOMElementData);
+	this.setComputedHeight(style,this.getComputedHeight(style,containingDOMElementData));
 	style.getComputedStyle().marginTop = this.getComputedMarginTop(style,containingDOMElementData);
 	style.getComputedStyle().marginBottom = this.getComputedMarginBottom(style,containingDOMElementData);
 }
-cocktailCore.style.computer.BoxStylesComputer.prototype.constrainDimensions = function(style) {
+cocktailCore.style.computer.BoxStylesComputer.prototype.constrainWidth = function(style) {
 	var computedStyle = style.getComputedStyle();
 	if(style.getMaxWidth() != cocktail.style.ConstrainedDimensionStyleValue.none) {
 		if(computedStyle.width > computedStyle.maxWidth) computedStyle.width = computedStyle.maxWidth;
 	}
 	if(computedStyle.width < computedStyle.minWidth) computedStyle.width = computedStyle.minWidth;
+}
+cocktailCore.style.computer.BoxStylesComputer.prototype.constrainHeight = function(style) {
+	var computedStyle = style.getComputedStyle();
 	if(style.getHeight() != cocktail.style.DimensionStyleValue.autoValue) {
 		if(style.getMaxHeight() != cocktail.style.ConstrainedDimensionStyleValue.none) {
 			if(computedStyle.height > computedStyle.maxHeight) computedStyle.height = computedStyle.maxHeight;
 		}
 		if(computedStyle.height < computedStyle.minHeight) computedStyle.height = computedStyle.minHeight;
 	}
+}
+cocktailCore.style.computer.BoxStylesComputer.prototype.setComputedHeight = function(style,computedHeight) {
+	style.getComputedStyle().height = computedHeight;
+	this.constrainHeight(style);
+}
+cocktailCore.style.computer.BoxStylesComputer.prototype.setComputedWidth = function(style,computedWidth) {
+	style.getComputedStyle().width = computedWidth;
+	this.constrainWidth(style);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedWidth = function(style,containingDOMElementData) {
 	return this.getComputedDimension(style.getWidth(),containingDOMElementData.width,containingDOMElementData.isWidthAuto,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
@@ -3217,19 +3227,18 @@ cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedAutoHeight = 
 	return 0;
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedMarginLeft = function(style,containingDOMElementData) {
-	return this.getComputedMargin(style.getMarginLeft(),style.getMarginRight(),containingDOMElementData.width,style.getComputedStyle().width,style.getWidth() == cocktail.style.DimensionStyleValue.autoValue,style.getComputedStyle().paddingRight + style.getComputedStyle().paddingLeft,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
+	return this.getComputedMargin(style.getMarginLeft(),style.getMarginRight(),containingDOMElementData.width,style.getComputedStyle().width,style.getWidth() == cocktail.style.DimensionStyleValue.autoValue,style.getComputedStyle().paddingRight + style.getComputedStyle().paddingLeft,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight,true);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedMarginRight = function(style,containingDOMElementData) {
-	return this.getComputedMargin(style.getMarginRight(),style.getMarginLeft(),containingDOMElementData.width,style.getComputedStyle().width,style.getWidth() == cocktail.style.DimensionStyleValue.autoValue,style.getComputedStyle().paddingRight + style.getComputedStyle().paddingLeft,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
+	return this.getComputedMargin(style.getMarginRight(),style.getMarginLeft(),containingDOMElementData.width,style.getComputedStyle().width,style.getWidth() == cocktail.style.DimensionStyleValue.autoValue,style.getComputedStyle().paddingRight + style.getComputedStyle().paddingLeft,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight,true);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedMarginTop = function(style,containingDOMElementData) {
-	return this.getComputedMargin(style.getMarginTop(),style.getMarginBottom(),containingDOMElementData.height,style.getComputedStyle().height,style.getHeight() == cocktail.style.DimensionStyleValue.autoValue,style.getComputedStyle().paddingTop + style.getComputedStyle().paddingBottom,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
+	return this.getComputedMargin(style.getMarginTop(),style.getMarginBottom(),containingDOMElementData.height,style.getComputedStyle().height,style.getHeight() == cocktail.style.DimensionStyleValue.autoValue,style.getComputedStyle().paddingTop + style.getComputedStyle().paddingBottom,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight,false);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedMarginBottom = function(style,containingDOMElementData) {
-	return this.getComputedMargin(style.getMarginBottom(),style.getMarginTop(),containingDOMElementData.height,style.getComputedStyle().height,style.getHeight() == cocktail.style.DimensionStyleValue.autoValue,style.getComputedStyle().paddingTop + style.getComputedStyle().paddingBottom,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
+	return this.getComputedMargin(style.getMarginBottom(),style.getMarginTop(),containingDOMElementData.height,style.getComputedStyle().height,style.getHeight() == cocktail.style.DimensionStyleValue.autoValue,style.getComputedStyle().paddingTop + style.getComputedStyle().paddingBottom,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight,false);
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedMargin = function(marginStyleValue,opositeMarginStyleValue,containingDOMElementDimension,computedDimension,isDimensionAuto,computedPaddingsDimension,fontSize,xHeight,isHorizontalMargin) {
-	if(isHorizontalMargin == null) isHorizontalMargin = false;
 	var computedMargin;
 	var $e = (marginStyleValue);
 	switch( $e[1] ) {
@@ -3242,21 +3251,20 @@ cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedMargin = func
 		if(isDimensionAuto == true) computedMargin = 0; else computedMargin = Math.round(cocktailCore.unit.UnitManager.getPixelFromPercent(value,containingDOMElementDimension));
 		break;
 	case 2:
-		computedMargin = this.getComputedAutoMargin(opositeMarginStyleValue,marginStyleValue,containingDOMElementDimension,computedDimension,isDimensionAuto,computedPaddingsDimension,fontSize,xHeight);
+		computedMargin = this.getComputedAutoMargin(opositeMarginStyleValue,marginStyleValue,containingDOMElementDimension,computedDimension,isDimensionAuto,computedPaddingsDimension,fontSize,xHeight,isHorizontalMargin);
 		break;
 	}
 	return computedMargin;
 }
 cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedAutoMargin = function(marginStyleValue,opositeMarginStyleValue,containingDOMElementDimension,computedDimension,isDimensionAuto,computedPaddingsDimension,fontSize,xHeight,isHorizontalMargin) {
-	if(isHorizontalMargin == null) isHorizontalMargin = false;
 	var computedMargin;
-	if(isHorizontalMargin == true || isDimensionAuto == true) computedMargin = 0; else {
+	if(isHorizontalMargin == false || isDimensionAuto == true) computedMargin = 0; else {
 		switch( (opositeMarginStyleValue)[1] ) {
 		case 2:
 			computedMargin = Math.round((containingDOMElementDimension - computedDimension - computedPaddingsDimension) / 2);
 			break;
 		default:
-			var opositeComputedMargin = this.getComputedMargin(opositeMarginStyleValue,marginStyleValue,containingDOMElementDimension,computedDimension,isDimensionAuto,computedPaddingsDimension,fontSize,xHeight);
+			var opositeComputedMargin = this.getComputedMargin(opositeMarginStyleValue,marginStyleValue,containingDOMElementDimension,computedDimension,isDimensionAuto,computedPaddingsDimension,fontSize,xHeight,isHorizontalMargin);
 			computedMargin = containingDOMElementDimension - computedDimension - computedPaddingsDimension - opositeComputedMargin;
 		}
 	}
@@ -3319,7 +3327,7 @@ cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedDimension = f
 	}
 	return computedDimensions;
 }
-cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedPadding = function(paddingStyleValue,containingDOMElementDimension,isContainingDimensionAuto,fontSize,xHeight) {
+cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedPadding = function(paddingStyleValue,containingDOMElementDimension,fontSize,xHeight) {
 	var computedPaddingValue;
 	var $e = (paddingStyleValue);
 	switch( $e[1] ) {
@@ -3329,7 +3337,7 @@ cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedPadding = fun
 		break;
 	case 1:
 		var value = $e[2];
-		if(isContainingDimensionAuto == true) computedPaddingValue = 0; else computedPaddingValue = Math.round(cocktailCore.unit.UnitManager.getPixelFromPercent(value,containingDOMElementDimension));
+		computedPaddingValue = Math.round(cocktailCore.unit.UnitManager.getPixelFromPercent(value,containingDOMElementDimension));
 		break;
 	}
 	return computedPaddingValue;
@@ -3343,6 +3351,11 @@ cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer = functi
 cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer.__name__ = ["cocktailCore","style","computer","boxComputers","EmbeddedBlockBoxStylesComputer"];
 cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer.__super__ = cocktailCore.style.computer.BoxStylesComputer;
 for(var k in cocktailCore.style.computer.BoxStylesComputer.prototype ) cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer.prototype[k] = cocktailCore.style.computer.BoxStylesComputer.prototype[k];
+cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer.prototype.measureAutoWidth = function(style,containingDOMElementData) {
+	this.setComputedWidth(style,this.getComputedAutoWidth(style,containingDOMElementData));
+	style.getComputedStyle().marginLeft = this.getComputedMarginLeft(style,containingDOMElementData);
+	style.getComputedStyle().marginRight = this.getComputedMarginRight(style,containingDOMElementData);
+}
 cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer.prototype.getComputedAutoWidth = function(style,containingDOMElementData) {
 	var ret = 0;
 	var embeddedDOMElement = style.getDOMElement();
@@ -3355,6 +3368,7 @@ cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer.prototyp
 		}
 	} else {
 		var computedHeight = this.getComputedDimension(style.getHeight(),containingDOMElementData.height,containingDOMElementData.isHeightAuto,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
+		this.setComputedHeight(style,computedHeight);
 		if(embeddedDOMElement.getIntrinsicRatio() != null) ret = Math.round(computedHeight * embeddedDOMElement.getIntrinsicRatio()); else if(embeddedDOMElement.getIntrinsicWidth() != null) ret = embeddedDOMElement.getIntrinsicWidth(); else ret = 300;
 	}
 	return ret;
@@ -3366,14 +3380,14 @@ cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer.prototyp
 		if(embeddedDOMElement.getIntrinsicHeight() != null) ret = embeddedDOMElement.getIntrinsicHeight();
 	} else {
 		var computedWidth = this.getComputedDimension(style.getWidth(),containingDOMElementData.width,containingDOMElementData.isWidthAuto,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
-		if(embeddedDOMElement.getIntrinsicRatio() != null) ret = Math.round(computedWidth / embeddedDOMElement.getIntrinsicRatio()); else ret = 150;
+		this.setComputedWidth(style,computedWidth);
+		if(embeddedDOMElement.getIntrinsicRatio() != null) ret = Math.round(style.getComputedStyle().width / embeddedDOMElement.getIntrinsicRatio()); else ret = 150;
 	}
 	return ret;
 }
 cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer.prototype.getComputedAutoMargin = function(marginStyleValue,opositeMarginStyleValue,containingDOMElementDimension,computedDimension,isDimensionAuto,computedPaddingsDimension,fontSize,xHeight,isHorizontalMargin) {
-	if(isHorizontalMargin == null) isHorizontalMargin = false;
 	var computedMargin;
-	if(isHorizontalMargin == false) computedMargin = 0; else computedMargin = cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedAutoMargin.call(this,marginStyleValue,opositeMarginStyleValue,containingDOMElementDimension,computedDimension,isDimensionAuto,computedPaddingsDimension,fontSize,xHeight,isHorizontalMargin);
+	if(isHorizontalMargin == false) computedMargin = 0; else computedMargin = cocktailCore.style.computer.BoxStylesComputer.prototype.getComputedAutoMargin.call(this,marginStyleValue,opositeMarginStyleValue,containingDOMElementDimension,computedDimension,false,computedPaddingsDimension,fontSize,xHeight,isHorizontalMargin);
 	return computedMargin;
 }
 cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer.prototype.__class__ = cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer;
@@ -3385,7 +3399,6 @@ cocktailCore.style.computer.boxComputers.EmbeddedInlineBoxStylesComputer.__name_
 cocktailCore.style.computer.boxComputers.EmbeddedInlineBoxStylesComputer.__super__ = cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer;
 for(var k in cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer.prototype ) cocktailCore.style.computer.boxComputers.EmbeddedInlineBoxStylesComputer.prototype[k] = cocktailCore.style.computer.boxComputers.EmbeddedBlockBoxStylesComputer.prototype[k];
 cocktailCore.style.computer.boxComputers.EmbeddedInlineBoxStylesComputer.prototype.getComputedAutoMargin = function(marginStyleValue,opositeMarginStyleValue,containingDOMElementDimension,computedDimension,isDimensionAuto,computedPaddingsDimension,fontSize,xHeight,isHorizontalMargin) {
-	if(isHorizontalMargin == null) isHorizontalMargin = false;
 	return 0;
 }
 cocktailCore.style.computer.boxComputers.EmbeddedInlineBoxStylesComputer.prototype.__class__ = cocktailCore.style.computer.boxComputers.EmbeddedInlineBoxStylesComputer;
@@ -3535,7 +3548,6 @@ cocktailCore.style.computer.boxComputers.InlineBlockBoxStylesComputer.__name__ =
 cocktailCore.style.computer.boxComputers.InlineBlockBoxStylesComputer.__super__ = cocktailCore.style.computer.BoxStylesComputer;
 for(var k in cocktailCore.style.computer.BoxStylesComputer.prototype ) cocktailCore.style.computer.boxComputers.InlineBlockBoxStylesComputer.prototype[k] = cocktailCore.style.computer.BoxStylesComputer.prototype[k];
 cocktailCore.style.computer.boxComputers.InlineBlockBoxStylesComputer.prototype.getComputedAutoMargin = function(marginStyleValue,opositeMarginStyleValue,containingDOMElementDimension,computedDimension,isDimensionAuto,computedPaddingsDimension,fontSize,xHeight,isHorizontalMargin) {
-	if(isHorizontalMargin == null) isHorizontalMargin = false;
 	return 0;
 }
 cocktailCore.style.computer.boxComputers.InlineBlockBoxStylesComputer.prototype.shrinkToFit = function(style,containingDOMElementData,minimumWidth) {
@@ -3914,7 +3926,7 @@ hxtml2.HTMLPageData.prototype.createElement = function(elementType,attributes,pa
 		if(semantic != "") element = new cocktailCore.domElement.js.ContainerDOMElement(cocktail.nativeElement.NativeElementManager.createNativeElement(cocktail.nativeElement.NativeElementTypeValue.custom(semantic))); else element = new cocktailCore.domElement.js.ContainerDOMElement();
 	}
 	if(parent != null) parent.addChild(element);
-	this.setAttributes(elementType,attributes);
+	this.setAttributes(element,attributes);
 	return element;
 }
 hxtml2.HTMLPageData.prototype.setAttributes = function(element,attributes) {
@@ -3923,7 +3935,7 @@ hxtml2.HTMLPageData.prototype.setAttributes = function(element,attributes) {
 	if(id != "") this.registerId(id,element);
 	if(attributes.exists("style")) {
 		var styles = attributes.get("style");
-		this._cssParser.setStyleFromString(element,styles);
+		this._cssParser.setStyleFromString(element.getStyle(),styles);
 	}
 }
 hxtml2.HTMLPageData.prototype.__class__ = hxtml2.HTMLPageData;
@@ -6661,7 +6673,6 @@ cocktailCore.style.computer.boxComputers.InLineBoxStylesComputer.__name__ = ["co
 cocktailCore.style.computer.boxComputers.InLineBoxStylesComputer.__super__ = cocktailCore.style.computer.BoxStylesComputer;
 for(var k in cocktailCore.style.computer.BoxStylesComputer.prototype ) cocktailCore.style.computer.boxComputers.InLineBoxStylesComputer.prototype[k] = cocktailCore.style.computer.BoxStylesComputer.prototype[k];
 cocktailCore.style.computer.boxComputers.InLineBoxStylesComputer.prototype.getComputedAutoMargin = function(marginStyleValue,opositeMarginStyleValue,containingDOMElementDimension,computedDimension,isDimensionAuto,computedPaddingsDimension,fontSize,xHeight,isHorizontalMargin) {
-	if(isHorizontalMargin == null) isHorizontalMargin = false;
 	return 0;
 }
 cocktailCore.style.computer.boxComputers.InLineBoxStylesComputer.prototype.getComputedWidth = function(style,containingDOMElementData) {
@@ -6700,25 +6711,25 @@ Main.main = function() {
 	runner.run();
 }
 Main.prototype.testHTMLParser = function() {
-	haxe.Log.trace("testHTMLParser START",{ fileName : "Main.hx", lineNumber : 44, className : "Main", methodName : "testHTMLParser"});
-	var htmlData = "<html>\n\t\t\t<head>\n\t\t\t</head>\n\t\t\t<body>\n\t\t\t\t<div id='main'>\n\t\t\t\t\t<H1>Test of an HTML page</H1>\n\t\t\t\t\tSome random text with an image here <img src='./test.png' style='width: 100%; height: 50px' />. And a dot at the end.\n\t\t\t\t\t<p>\n\t\t\t\t\t\tand here is a paragraph\n\t\t\t\t\t</p>\n\t\t\t\t</div>\n\t\t\t</body>\n\t\t</html>";
+	haxe.Log.trace("testHTMLParser START",{ fileName : "Main.hx", lineNumber : 47, className : "Main", methodName : "testHTMLParser"});
+	var htmlData = "<html>\n\t\t\t<head>\n\t\t\t</head>\n\t\t\t<body style='display:block; '>\n\t\t\t\t<div id='main' style='display:block; '>\n\t\t\t\t\t<H1 style='display:block; font-size:42px; margin-left: 154px' >Test of an HTML page</H1>\n\t\t\t\t\tSome random text with an image here <img src='./test.png' style='position : relative ; display:inline; right:0%; top: 455px; width: 50%; height: 50px' />. And a dot at the end.\n\t\t\t\t\t<p style='display:block; '>\n\t\t\t\t\t\tand here is a paragraph\n\t\t\t\t\t</p>\n\t\t\t\t</div>\n\t\t\t</body>\n\t\t</html>";
 	var xml = Xml.parse(htmlData);
-	haxe.Log.trace(xml,{ fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "testHTMLParser"});
+	haxe.Log.trace(xml,{ fileName : "Main.hx", lineNumber : 73, className : "Main", methodName : "testHTMLParser"});
 	var htmlPageData = null;
 	htmlPageData = new hxtml2.HTMLParser().parse(xml.firstElement());
 	new cocktailCore.domElement.js.BodyDOMElement().addChild(htmlPageData.containerDOMElement);
-	utest.Assert.notEquals(htmlPageData,null,null,{ fileName : "Main.hx", lineNumber : 77, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.notEquals(htmlPageData,null,null,{ fileName : "Main.hx", lineNumber : 88, className : "Main", methodName : "testHTMLParser"});
 	var childData;
 	var domElementDivMain;
 	var domElement;
 	var str;
 	childData = htmlPageData.containerDOMElement.getChildren()[0];
 	domElementDivMain = childData.child;
-	utest.Assert["is"](domElementDivMain,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 89, className : "Main", methodName : "testHTMLParser"});
-	utest.Assert.equals(domElementDivMain.getChildren().length,5,null,{ fileName : "Main.hx", lineNumber : 90, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElementDivMain,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 101, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(domElementDivMain.getChildren().length,5,null,{ fileName : "Main.hx", lineNumber : 102, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[0];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 96, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 108, className : "Main", methodName : "testHTMLParser"});
 	childData = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -6727,7 +6738,7 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getChildren()[0];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 100, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 112, className : "Main", methodName : "testHTMLParser"});
 	str = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -6736,10 +6747,10 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getText();
 	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,"Test of an HTML page",null,{ fileName : "Main.hx", lineNumber : 102, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(str,"Test of an HTML page",null,{ fileName : "Main.hx", lineNumber : 114, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[1];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 107, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 119, className : "Main", methodName : "testHTMLParser"});
 	str = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -6748,46 +6759,18 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getText();
 	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,"\n\t\t\t\t\tSome random text with an image here ",null,{ fileName : "Main.hx", lineNumber : 109, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(str,"\n\t\t\t\t\tSome random text with an image here ",null,{ fileName : "Main.hx", lineNumber : 121, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[2];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.domElement.js.ImageDOMElement,null,{ fileName : "Main.hx", lineNumber : 114, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.domElement.js.ImageDOMElement,null,{ fileName : "Main.hx", lineNumber : 126, className : "Main", methodName : "testHTMLParser"});
 	utest.Assert.equals(((function($this) {
 		var $r;
 		var $t = domElement;
 		if(Std["is"]($t,cocktailCore.domElement.js.ImageDOMElement)) $t; else throw "Class cast error";
 		$r = $t;
 		return $r;
-	}(this))).getSrc(),"./test.png",null,{ fileName : "Main.hx", lineNumber : 115, className : "Main", methodName : "testHTMLParser"});
+	}(this))).getSrc(),"./test.png",null,{ fileName : "Main.hx", lineNumber : 127, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[3];
-	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 120, className : "Main", methodName : "testHTMLParser"});
-	str = ((function($this) {
-		var $r;
-		var $t = domElement;
-		if(Std["is"]($t,cocktailCore.textElement.js.TextElement)) $t; else throw "Class cast error";
-		$r = $t;
-		return $r;
-	}(this))).getText();
-	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,". And a dot at the end.\n\t\t\t\t\t",null,{ fileName : "Main.hx", lineNumber : 122, className : "Main", methodName : "testHTMLParser"});
-	childData = domElementDivMain.getChildren()[4];
-	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 127, className : "Main", methodName : "testHTMLParser"});
-	utest.Assert.equals(((function($this) {
-		var $r;
-		var $t = domElement;
-		if(Std["is"]($t,cocktailCore.domElement.js.ContainerDOMElement)) $t; else throw "Class cast error";
-		$r = $t;
-		return $r;
-	}(this))).getSemantic(),"p",null,{ fileName : "Main.hx", lineNumber : 128, className : "Main", methodName : "testHTMLParser"});
-	childData = ((function($this) {
-		var $r;
-		var $t = domElement;
-		if(Std["is"]($t,cocktailCore.domElement.js.ContainerDOMElement)) $t; else throw "Class cast error";
-		$r = $t;
-		return $r;
-	}(this))).getChildren()[0];
 	domElement = childData.child;
 	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 132, className : "Main", methodName : "testHTMLParser"});
 	str = ((function($this) {
@@ -6798,8 +6781,36 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getText();
 	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,"\n\t\t\t\t\t\tand here is a paragraph\n",null,{ fileName : "Main.hx", lineNumber : 134, className : "Main", methodName : "testHTMLParser"});
-	haxe.Log.trace("testHTMLParser END",{ fileName : "Main.hx", lineNumber : 136, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(str,". And a dot at the end.\n\t\t\t\t\t",null,{ fileName : "Main.hx", lineNumber : 134, className : "Main", methodName : "testHTMLParser"});
+	childData = domElementDivMain.getChildren()[4];
+	domElement = childData.child;
+	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 139, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(((function($this) {
+		var $r;
+		var $t = domElement;
+		if(Std["is"]($t,cocktailCore.domElement.js.ContainerDOMElement)) $t; else throw "Class cast error";
+		$r = $t;
+		return $r;
+	}(this))).getSemantic(),"p",null,{ fileName : "Main.hx", lineNumber : 140, className : "Main", methodName : "testHTMLParser"});
+	childData = ((function($this) {
+		var $r;
+		var $t = domElement;
+		if(Std["is"]($t,cocktailCore.domElement.js.ContainerDOMElement)) $t; else throw "Class cast error";
+		$r = $t;
+		return $r;
+	}(this))).getChildren()[0];
+	domElement = childData.child;
+	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 144, className : "Main", methodName : "testHTMLParser"});
+	str = ((function($this) {
+		var $r;
+		var $t = domElement;
+		if(Std["is"]($t,cocktailCore.textElement.js.TextElement)) $t; else throw "Class cast error";
+		$r = $t;
+		return $r;
+	}(this))).getText();
+	if(str.nodeValue != null) str = str.nodeValue;
+	utest.Assert.equals(str,"\n\t\t\t\t\t\tand here is a paragraph\n\t\t\t\t\t",null,{ fileName : "Main.hx", lineNumber : 146, className : "Main", methodName : "testHTMLParser"});
+	haxe.Log.trace("testHTMLParser END",{ fileName : "Main.hx", lineNumber : 148, className : "Main", methodName : "testHTMLParser"});
 }
 Main.prototype.__class__ = Main;
 haxe.Log = function() { }
@@ -7378,17 +7389,17 @@ cocktailCore.style.computer.boxComputers.PositionedBoxStylesComputer.prototype.m
 }
 cocktailCore.style.computer.boxComputers.PositionedBoxStylesComputer.prototype.measureAutoWidth = function(style,containingDOMElementData) {
 	var computedStyle = style.getComputedStyle();
-	if(style.getMarginLeft() == cocktail.style.MarginStyleValue.autoValue) style.getComputedStyle().marginLeft = 0; else style.getComputedStyle().marginLeft = this.getComputedMarginLeft(style,containingDOMElementData);
-	if(style.getMarginRight() == cocktail.style.MarginStyleValue.autoValue) style.getComputedStyle().marginRight = 0; else style.getComputedStyle().marginRight = this.getComputedMarginRight(style,containingDOMElementData);
+	if(style.getMarginLeft() == cocktail.style.MarginStyleValue.autoValue) computedStyle.marginLeft = 0; else computedStyle.marginLeft = this.getComputedMarginLeft(style,containingDOMElementData);
+	if(style.getMarginRight() == cocktail.style.MarginStyleValue.autoValue) computedStyle.marginRight = 0; else computedStyle.marginRight = this.getComputedMarginRight(style,containingDOMElementData);
 	if(style.getLeft() != cocktail.style.PositionOffsetStyleValue.autoValue && style.getRight() != cocktail.style.PositionOffsetStyleValue.autoValue) {
-		style.getComputedStyle().left = this.getComputedPositionOffset(style.getLeft(),containingDOMElementData.width,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
-		style.getComputedStyle().right = this.getComputedPositionOffset(style.getRight(),containingDOMElementData.width,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
-		style.getComputedStyle().width = containingDOMElementData.width - computedStyle.marginLeft - computedStyle.left - computedStyle.right - computedStyle.marginRight - computedStyle.paddingLeft - computedStyle.paddingRight;
-	}
+		computedStyle.left = this.getComputedPositionOffset(style.getLeft(),containingDOMElementData.width,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
+		computedStyle.right = this.getComputedPositionOffset(style.getRight(),containingDOMElementData.width,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
+		computedStyle.width = containingDOMElementData.width - computedStyle.marginLeft - computedStyle.left - computedStyle.right - computedStyle.marginRight - computedStyle.paddingLeft - computedStyle.paddingRight;
+	} else computedStyle.width = 10000000;
 }
 cocktailCore.style.computer.boxComputers.PositionedBoxStylesComputer.prototype.measureWidth = function(style,containingDOMElementData) {
 	var computedStyle = style.getComputedStyle();
-	style.getComputedStyle().width = this.getComputedWidth(style,containingDOMElementData);
+	this.setComputedWidth(style,this.getComputedWidth(style,containingDOMElementData));
 	if(style.getLeft() != cocktail.style.PositionOffsetStyleValue.autoValue && style.getRight() != cocktail.style.PositionOffsetStyleValue.autoValue) {
 		style.getComputedStyle().left = this.getComputedPositionOffset(style.getLeft(),containingDOMElementData.width,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
 		style.getComputedStyle().right = this.getComputedPositionOffset(style.getRight(),containingDOMElementData.width,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
@@ -7433,12 +7444,12 @@ cocktailCore.style.computer.boxComputers.PositionedBoxStylesComputer.prototype.m
 	if(style.getTop() != cocktail.style.PositionOffsetStyleValue.autoValue && style.getBottom() != cocktail.style.PositionOffsetStyleValue.autoValue) {
 		style.getComputedStyle().top = this.getComputedPositionOffset(style.getTop(),containingDOMElementData.height,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
 		style.getComputedStyle().bottom = this.getComputedPositionOffset(style.getBottom(),containingDOMElementData.height,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
-		style.getComputedStyle().height = containingDOMElementData.height - computedStyle.marginTop - computedStyle.top - computedStyle.bottom - computedStyle.marginBottom - computedStyle.paddingTop - computedStyle.paddingBottom;
+		this.setComputedHeight(style,containingDOMElementData.height - computedStyle.marginTop - computedStyle.top - computedStyle.bottom - computedStyle.marginBottom - computedStyle.paddingTop - computedStyle.paddingBottom);
 	}
 }
 cocktailCore.style.computer.boxComputers.PositionedBoxStylesComputer.prototype.measureHeight = function(style,containingDOMElementData) {
 	var computedStyle = style.getComputedStyle();
-	style.getComputedStyle().height = this.getComputedHeight(style,containingDOMElementData);
+	this.setComputedHeight(style,this.getComputedHeight(style,containingDOMElementData));
 	if(style.getTop() != cocktail.style.PositionOffsetStyleValue.autoValue && style.getBottom() != cocktail.style.PositionOffsetStyleValue.autoValue) {
 		style.getComputedStyle().top = this.getComputedPositionOffset(style.getTop(),containingDOMElementData.height,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
 		style.getComputedStyle().bottom = this.getComputedPositionOffset(style.getBottom(),containingDOMElementData.height,style.getFontMetricsData().fontSize,style.getFontMetricsData().xHeight);
@@ -8375,11 +8386,906 @@ cocktail.unit.AngleValue.deg = function(value) { var $x = ["deg",0,value]; $x.__
 cocktail.unit.AngleValue.grad = function(value) { var $x = ["grad",1,value]; $x.__enum__ = cocktail.unit.AngleValue; $x.toString = $estr; return $x; }
 cocktail.unit.AngleValue.rad = function(value) { var $x = ["rad",2,value]; $x.__enum__ = cocktail.unit.AngleValue; $x.toString = $estr; return $x; }
 cocktail.unit.AngleValue.turn = function(value) { var $x = ["turn",3,value]; $x.__enum__ = cocktail.unit.AngleValue; $x.toString = $estr; return $x; }
+hxtml2.EnumStringConnectionManager = function() { }
+hxtml2.EnumStringConnectionManager.__name__ = ["hxtml2","EnumStringConnectionManager"];
+hxtml2.EnumStringConnectionManager.getEnumFromStringValue = function(enumType,stringValue,arguments) {
+	haxe.Log.trace("getEnumFromStringValue(" + Type["typeof"](enumType) + ", " + stringValue + ", " + arguments + ")",{ fileName : "CSSParser.hx", lineNumber : 39, className : "hxtml2.EnumStringConnectionManager", methodName : "getEnumFromStringValue"});
+	var _g = 0, _g1 = [{ enumValue : cocktail.unit.LengthValue._in, stringValue : "in"},{ enumValue : cocktail.style.MarginStyleValue.autoValue, stringValue : "auto"},{ enumValue : cocktail.style.DisplayStyleValue.inlineStyle, stringValue : "inline"},{ enumValue : cocktail.style.DisplayStyleValue.inlineBlock, stringValue : "inline-block"},{ enumValue : cocktail.style.PositionStyleValue.staticStyle, stringValue : "static"}];
+	while(_g < _g1.length) {
+		var idx = _g1[_g];
+		++_g;
+		if(idx.stringValue == stringValue) {
+			if(arguments == null) return idx.enumValue;
+			haxe.Log.trace(idx.stringValue + " found as " + idx.enumValue,{ fileName : "CSSParser.hx", lineNumber : 49, className : "hxtml2.EnumStringConnectionManager", methodName : "getEnumFromStringValue"});
+			var res = null;
+			try {
+				res = Type.createInstance(idx.enumValue,arguments);
+			} catch( msg ) {
+				if( js.Boot.__instanceof(msg,String) ) {
+					throw "Unknown enum \"" + stringValue + "\"\n" + msg;
+				} else throw(msg);
+			}
+			return res;
+		}
+	}
+	try {
+		return Type.createEnum(enumType,stringValue,arguments);
+	} catch( msg ) {
+		if( js.Boot.__instanceof(msg,String) ) {
+		} else throw(msg);
+	}
+	throw "Unknown enum \"" + stringValue + "\"";
+	return null;
+}
+hxtml2.EnumStringConnectionManager.prototype.__class__ = hxtml2.EnumStringConnectionManager;
+hxtml2.Token = { __ename__ : ["hxtml2","Token"], __constructs__ : ["TIdent","TString","TInt","TFloat","TDblDot","TSharp","TPOpen","TPClose","TExclam","TComma","TEof","TPercent","TSemicolon","TBrOpen","TBrClose","TDot","TSpaces","TSlash"] }
+hxtml2.Token.TIdent = function(i) { var $x = ["TIdent",0,i]; $x.__enum__ = hxtml2.Token; $x.toString = $estr; return $x; }
+hxtml2.Token.TString = function(s) { var $x = ["TString",1,s]; $x.__enum__ = hxtml2.Token; $x.toString = $estr; return $x; }
+hxtml2.Token.TInt = function(i) { var $x = ["TInt",2,i]; $x.__enum__ = hxtml2.Token; $x.toString = $estr; return $x; }
+hxtml2.Token.TFloat = function(f) { var $x = ["TFloat",3,f]; $x.__enum__ = hxtml2.Token; $x.toString = $estr; return $x; }
+hxtml2.Token.TDblDot = ["TDblDot",4];
+hxtml2.Token.TDblDot.toString = $estr;
+hxtml2.Token.TDblDot.__enum__ = hxtml2.Token;
+hxtml2.Token.TSharp = ["TSharp",5];
+hxtml2.Token.TSharp.toString = $estr;
+hxtml2.Token.TSharp.__enum__ = hxtml2.Token;
+hxtml2.Token.TPOpen = ["TPOpen",6];
+hxtml2.Token.TPOpen.toString = $estr;
+hxtml2.Token.TPOpen.__enum__ = hxtml2.Token;
+hxtml2.Token.TPClose = ["TPClose",7];
+hxtml2.Token.TPClose.toString = $estr;
+hxtml2.Token.TPClose.__enum__ = hxtml2.Token;
+hxtml2.Token.TExclam = ["TExclam",8];
+hxtml2.Token.TExclam.toString = $estr;
+hxtml2.Token.TExclam.__enum__ = hxtml2.Token;
+hxtml2.Token.TComma = ["TComma",9];
+hxtml2.Token.TComma.toString = $estr;
+hxtml2.Token.TComma.__enum__ = hxtml2.Token;
+hxtml2.Token.TEof = ["TEof",10];
+hxtml2.Token.TEof.toString = $estr;
+hxtml2.Token.TEof.__enum__ = hxtml2.Token;
+hxtml2.Token.TPercent = ["TPercent",11];
+hxtml2.Token.TPercent.toString = $estr;
+hxtml2.Token.TPercent.__enum__ = hxtml2.Token;
+hxtml2.Token.TSemicolon = ["TSemicolon",12];
+hxtml2.Token.TSemicolon.toString = $estr;
+hxtml2.Token.TSemicolon.__enum__ = hxtml2.Token;
+hxtml2.Token.TBrOpen = ["TBrOpen",13];
+hxtml2.Token.TBrOpen.toString = $estr;
+hxtml2.Token.TBrOpen.__enum__ = hxtml2.Token;
+hxtml2.Token.TBrClose = ["TBrClose",14];
+hxtml2.Token.TBrClose.toString = $estr;
+hxtml2.Token.TBrClose.__enum__ = hxtml2.Token;
+hxtml2.Token.TDot = ["TDot",15];
+hxtml2.Token.TDot.toString = $estr;
+hxtml2.Token.TDot.__enum__ = hxtml2.Token;
+hxtml2.Token.TSpaces = ["TSpaces",16];
+hxtml2.Token.TSpaces.toString = $estr;
+hxtml2.Token.TSpaces.__enum__ = hxtml2.Token;
+hxtml2.Token.TSlash = ["TSlash",17];
+hxtml2.Token.TSlash.toString = $estr;
+hxtml2.Token.TSlash.__enum__ = hxtml2.Token;
+hxtml2.Value = { __ename__ : ["hxtml2","Value"], __constructs__ : ["VIdent","VString","VUnit","VFloat","VInt","VHex","VList","VGroup","VUrl","VLabel","VSlash"] }
+hxtml2.Value.VIdent = function(i) { var $x = ["VIdent",0,i]; $x.__enum__ = hxtml2.Value; $x.toString = $estr; return $x; }
+hxtml2.Value.VString = function(s) { var $x = ["VString",1,s]; $x.__enum__ = hxtml2.Value; $x.toString = $estr; return $x; }
+hxtml2.Value.VUnit = function(v,unit) { var $x = ["VUnit",2,v,unit]; $x.__enum__ = hxtml2.Value; $x.toString = $estr; return $x; }
+hxtml2.Value.VFloat = function(v) { var $x = ["VFloat",3,v]; $x.__enum__ = hxtml2.Value; $x.toString = $estr; return $x; }
+hxtml2.Value.VInt = function(v) { var $x = ["VInt",4,v]; $x.__enum__ = hxtml2.Value; $x.toString = $estr; return $x; }
+hxtml2.Value.VHex = function(v) { var $x = ["VHex",5,v]; $x.__enum__ = hxtml2.Value; $x.toString = $estr; return $x; }
+hxtml2.Value.VList = function(l) { var $x = ["VList",6,l]; $x.__enum__ = hxtml2.Value; $x.toString = $estr; return $x; }
+hxtml2.Value.VGroup = function(l) { var $x = ["VGroup",7,l]; $x.__enum__ = hxtml2.Value; $x.toString = $estr; return $x; }
+hxtml2.Value.VUrl = function(v) { var $x = ["VUrl",8,v]; $x.__enum__ = hxtml2.Value; $x.toString = $estr; return $x; }
+hxtml2.Value.VLabel = function(v,val) { var $x = ["VLabel",9,v,val]; $x.__enum__ = hxtml2.Value; $x.toString = $estr; return $x; }
+hxtml2.Value.VSlash = ["VSlash",10];
+hxtml2.Value.VSlash.toString = $estr;
+hxtml2.Value.VSlash.__enum__ = hxtml2.Value;
+hxtml2.Unit = { __ename__ : ["hxtml2","Unit"], __constructs__ : ["Pix","Percent","EM"] }
+hxtml2.Unit.Pix = function(v) { var $x = ["Pix",0,v]; $x.__enum__ = hxtml2.Unit; $x.toString = $estr; return $x; }
+hxtml2.Unit.Percent = function(v) { var $x = ["Percent",1,v]; $x.__enum__ = hxtml2.Unit; $x.toString = $estr; return $x; }
+hxtml2.Unit.EM = function(v) { var $x = ["EM",2,v]; $x.__enum__ = hxtml2.Unit; $x.toString = $estr; return $x; }
 hxtml2.CSSParser = function(p) {
 }
 hxtml2.CSSParser.__name__ = ["hxtml2","CSSParser"];
-hxtml2.CSSParser.prototype.setStyleFromString = function(element,styles) {
-	haxe.Log.trace("to be implmented",{ fileName : "CSSParser.hx", lineNumber : 24, className : "hxtml2.CSSParser", methodName : "setStyleFromString"});
+hxtml2.CSSParser.prototype.css = null;
+hxtml2.CSSParser.prototype.s = null;
+hxtml2.CSSParser.prototype.simp = null;
+hxtml2.CSSParser.prototype.pos = null;
+hxtml2.CSSParser.prototype.spacesTokens = null;
+hxtml2.CSSParser.prototype.tokens = null;
+hxtml2.CSSParser.prototype.setStyleFromString = function(style,css) {
+	haxe.Log.trace("setStyleFromString " + style + " -  " + Type["typeof"](style),{ fileName : "CSSParser.hx", lineNumber : 157, className : "hxtml2.CSSParser", methodName : "setStyleFromString"});
+	this.parse(css,style);
+}
+hxtml2.CSSParser.prototype.applyStyle = function(styleName,v,s) {
+	haxe.Log.trace("applyStyle " + styleName + ", " + v + ", " + s,{ fileName : "CSSParser.hx", lineNumber : 174, className : "hxtml2.CSSParser", methodName : "applyStyle"});
+	var $e = (v);
+	switch( $e[1] ) {
+	case 2:
+		var unit = $e[3], value = $e[2];
+		switch(styleName) {
+		case "width":
+			s.setWidth(this.getStyleValue(cocktail.style.DimensionStyleValue,value,unit));
+			break;
+		case "height":
+			s.setHeight(this.getStyleValue(cocktail.style.DimensionStyleValue,value,unit));
+			break;
+		case "top":
+			s.setTop(this.getStyleValue(cocktail.style.PositionOffsetStyleValue,value,unit));
+			break;
+		case "left":
+			s.setLeft(this.getStyleValue(cocktail.style.PositionOffsetStyleValue,value,unit));
+			break;
+		case "right":
+			s.setRight(this.getStyleValue(cocktail.style.PositionOffsetStyleValue,value,unit));
+			break;
+		case "bottom":
+			s.setBottom(this.getStyleValue(cocktail.style.PositionOffsetStyleValue,value,unit));
+			break;
+		case "font-size":
+			s.setFontSize(this.getStyleValue(cocktail.style.FontSizeStyleValue,value,unit));
+			break;
+		case "margin-left":
+			s.setMarginLeft(this.getStyleValue(cocktail.style.MarginStyleValue,value,unit));
+			break;
+		}
+		break;
+	case 0:
+		var value = $e[2];
+		switch(styleName) {
+		case "display":
+			s.setDisplay(hxtml2.EnumStringConnectionManager.getEnumFromStringValue(cocktail.style.DisplayStyleValue,value));
+			break;
+		case "position":
+			s.setPosition(hxtml2.EnumStringConnectionManager.getEnumFromStringValue(cocktail.style.PositionStyleValue,value));
+			break;
+		}
+		break;
+	default:
+		haxe.Log.trace("unknown style \"" + styleName + "\" of type " + v,{ fileName : "CSSParser.hx", lineNumber : 216, className : "hxtml2.CSSParser", methodName : "applyStyle"});
+		return false;
+	}
+	return true;
+}
+hxtml2.CSSParser.prototype.getStyleValue = function(enumType,value,unit) {
+	haxe.Log.trace("getStyleValue " + enumType + ", " + value + ", " + unit,{ fileName : "CSSParser.hx", lineNumber : 223, className : "hxtml2.CSSParser", methodName : "getStyleValue"});
+	return (function($this) {
+		var $r;
+		switch(unit) {
+		case "%":
+			$r = enumType.percent(Math.round(value));
+			break;
+		default:
+			$r = enumType.length(hxtml2.EnumStringConnectionManager.getEnumFromStringValue(cocktail.unit.LengthValue,unit,[value]));
+		}
+		return $r;
+	}(this));
+}
+hxtml2.CSSParser.prototype.getGroup = function(v,f) {
+	var $e = (v);
+	switch( $e[1] ) {
+	case 7:
+		var l = $e[2];
+		var a = [];
+		var _g = 0;
+		while(_g < l.length) {
+			var v1 = l[_g];
+			++_g;
+			var v2 = f(v1);
+			if(v2 == null) return null;
+			a.push(v2);
+		}
+		return a;
+	default:
+		var v1 = f(v);
+		return v1 == null?null:[v1];
+	}
+}
+hxtml2.CSSParser.prototype.getList = function(v,f) {
+	var $e = (v);
+	switch( $e[1] ) {
+	case 6:
+		var l = $e[2];
+		var a = [];
+		var _g = 0;
+		while(_g < l.length) {
+			var v1 = l[_g];
+			++_g;
+			var v2 = f(v1);
+			if(v2 == null) return null;
+			a.push(v2);
+		}
+		return a;
+	default:
+		var v1 = f(v);
+		return v1 == null?null:[v1];
+	}
+}
+hxtml2.CSSParser.prototype.getPix = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 2:
+			var u = $e[3], f = $e[2];
+			$r = (function($this) {
+				var $r;
+				switch(u) {
+				case "px":
+					$r = Std["int"](f);
+					break;
+				case "pt":
+					$r = Std["int"](f * 4 / 3);
+					break;
+				default:
+					$r = null;
+				}
+				return $r;
+			}($this));
+			break;
+		case 4:
+			var v1 = $e[2];
+			$r = v1;
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
+}
+hxtml2.CSSParser.prototype.getUnit = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 2:
+			var u = $e[3], f = $e[2];
+			$r = (function($this) {
+				var $r;
+				switch(u) {
+				case "px":
+					$r = hxtml2.Unit.Pix(Std["int"](f));
+					break;
+				case "pt":
+					$r = hxtml2.Unit.Pix(Std["int"](f * 4 / 3));
+					break;
+				case "em":
+					$r = hxtml2.Unit.EM(f);
+					break;
+				case "%":
+					$r = hxtml2.Unit.Percent(f / 100);
+					break;
+				default:
+					$r = null;
+				}
+				return $r;
+			}($this));
+			break;
+		case 4:
+			var v1 = $e[2];
+			$r = hxtml2.Unit.Pix(v1);
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
+}
+hxtml2.CSSParser.prototype.getIdent = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 0:
+			var v1 = $e[2];
+			$r = v1;
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
+}
+hxtml2.CSSParser.prototype.getCol = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 5:
+			var v1 = $e[2];
+			$r = v1.length == 6?Std.parseInt("0x" + v1):v1.length == 3?Std.parseInt("0x" + v1.charAt(0) + v1.charAt(0) + v1.charAt(1) + v1.charAt(1) + v1.charAt(2) + v1.charAt(2)):null;
+			break;
+		case 0:
+			var i = $e[2];
+			$r = (function($this) {
+				var $r;
+				switch(i) {
+				case "black":
+					$r = 0;
+					break;
+				case "red":
+					$r = 16711680;
+					break;
+				case "lime":
+					$r = 65280;
+					break;
+				case "blue":
+					$r = 255;
+					break;
+				case "white":
+					$r = 16777215;
+					break;
+				case "aqua":
+					$r = 65535;
+					break;
+				case "fuchsia":
+					$r = 16711935;
+					break;
+				case "yellow":
+					$r = 16776960;
+					break;
+				case "maroon":
+					$r = 8388608;
+					break;
+				case "green":
+					$r = 32768;
+					break;
+				case "navy":
+					$r = 128;
+					break;
+				case "olive":
+					$r = 8421376;
+					break;
+				case "purple":
+					$r = 8388736;
+					break;
+				case "teal":
+					$r = 32896;
+					break;
+				case "silver":
+					$r = 12632256;
+					break;
+				case "gray":case "grey":
+					$r = 8421504;
+					break;
+				default:
+					$r = null;
+				}
+				return $r;
+			}($this));
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
+}
+hxtml2.CSSParser.prototype.getFontName = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 1:
+			var s = $e[2];
+			$r = s;
+			break;
+		case 7:
+			$r = (function($this) {
+				var $r;
+				var g = $this.getGroup(v,$closure($this,"getIdent"));
+				$r = g == null?null:g.join(" ");
+				return $r;
+			}($this));
+			break;
+		case 0:
+			var i = $e[2];
+			$r = i;
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
+}
+hxtml2.CSSParser.prototype.unexpected = function(t) {
+	throw "Unexpected " + Std.string(t);
+	return null;
+}
+hxtml2.CSSParser.prototype.expect = function(t) {
+	var tk = this.readToken();
+	if(tk != t) this.unexpected(tk);
+}
+hxtml2.CSSParser.prototype.push = function(t) {
+	this.tokens.push(t);
+}
+hxtml2.CSSParser.prototype.isToken = function(t) {
+	var tk = this.readToken();
+	if(tk == t) return true;
+	this.tokens.push(tk);
+	return false;
+}
+hxtml2.CSSParser.prototype.parse = function(css,s) {
+	this.css = css;
+	this.s = s;
+	this.pos = 0;
+	this.tokens = [];
+	this.parseStyle(hxtml2.Token.TEof);
+}
+hxtml2.CSSParser.prototype.parseStyle = function(eof) {
+	while(true) {
+		if(this.isToken(eof)) break;
+		var r = this.readIdent();
+		this.expect(hxtml2.Token.TDblDot);
+		var v = this.readValue();
+		var s = this.s;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 9:
+			var val = $e[3], label = $e[2];
+			if(label == "important") {
+				v = val;
+				s = this.simp;
+			}
+			break;
+		default:
+		}
+		if(!this.applyStyle(r,v,s)) throw "Invalid value " + Std.string(v) + " for css " + r;
+		if(this.isToken(eof)) break;
+		this.expect(hxtml2.Token.TSemicolon);
+	}
+}
+hxtml2.CSSParser.prototype.parseRules = function(css) {
+	this.css = css;
+	this.pos = 0;
+	this.tokens = [];
+	var rules = [];
+	while(true) {
+		if(this.isToken(hxtml2.Token.TEof)) break;
+		var classes = [];
+		while(true) {
+			this.spacesTokens = true;
+			this.isToken(hxtml2.Token.TSpaces);
+			var c = this.readClass(null);
+			this.spacesTokens = false;
+			if(c == null) break;
+			classes.push(c);
+			if(!this.isToken(hxtml2.Token.TComma)) break;
+		}
+		if(classes.length == 0) this.unexpected(this.readToken());
+		this.expect(hxtml2.Token.TBrOpen);
+		this.simp = null;
+		this.parseStyle(hxtml2.Token.TBrClose);
+		var _g = 0;
+		while(_g < classes.length) {
+			var c = classes[_g];
+			++_g;
+			rules.push({ c : c, s : this.s, imp : false});
+		}
+		if(this.simp != null) {
+			var _g = 0;
+			while(_g < classes.length) {
+				var c = classes[_g];
+				++_g;
+				rules.push({ c : c, s : this.simp, imp : true});
+			}
+		}
+	}
+	return rules;
+}
+hxtml2.CSSParser.prototype.readClass = function(parent) {
+	var c = { parent : parent, node : null, id : null, className : null, pseudoClass : null};
+	var def = false;
+	var last = null;
+	try {
+		while(true) {
+			var t = this.readToken();
+			if(last == null) {
+				var $e = (t);
+				switch( $e[1] ) {
+				case 15:
+				case 5:
+				case 4:
+					last = t;
+					break;
+				case 0:
+					var i = $e[2];
+					c.node = i;
+					def = true;
+					break;
+				case 16:
+					return def?this.readClass(c):null;
+				case 13:
+				case 9:
+					this.tokens.push(t);
+					throw "__break__";
+					break;
+				default:
+					this.unexpected(t);
+				}
+			} else {
+				var $e = (t);
+				switch( $e[1] ) {
+				case 0:
+					var i = $e[2];
+					switch( (last)[1] ) {
+					case 15:
+						c.className = i;
+						def = true;
+						break;
+					case 5:
+						c.id = i;
+						def = true;
+						break;
+					case 4:
+						c.pseudoClass = i;
+						def = true;
+						break;
+					default:
+						throw "assert";
+					}
+					last = null;
+					break;
+				default:
+					this.unexpected(t);
+				}
+			}
+		}
+	} catch( e ) { if( e != "__break__" ) throw e; }
+	return def?c:parent;
+}
+hxtml2.CSSParser.prototype.readIdent = function() {
+	var t = this.readToken();
+	return (function($this) {
+		var $r;
+		var $e = (t);
+		switch( $e[1] ) {
+		case 0:
+			var i = $e[2];
+			$r = i;
+			break;
+		default:
+			$r = $this.unexpected(t);
+		}
+		return $r;
+	}(this));
+}
+hxtml2.CSSParser.prototype.readValue = function(opt) {
+	var t = this.readToken();
+	var v = (function($this) {
+		var $r;
+		var $e = (t);
+		switch( $e[1] ) {
+		case 5:
+			$r = hxtml2.Value.VHex($this.readHex());
+			break;
+		case 0:
+			var i = $e[2];
+			$r = hxtml2.Value.VIdent(i);
+			break;
+		case 1:
+			var s = $e[2];
+			$r = hxtml2.Value.VString(s);
+			break;
+		case 2:
+			var i = $e[2];
+			$r = $this.readValueUnit(i,i);
+			break;
+		case 3:
+			var f = $e[2];
+			$r = $this.readValueUnit(f,null);
+			break;
+		case 17:
+			$r = hxtml2.Value.VSlash;
+			break;
+		default:
+			$r = (function($this) {
+				var $r;
+				if(!opt) $this.unexpected(t);
+				$this.tokens.push(t);
+				$r = null;
+				return $r;
+			}($this));
+		}
+		return $r;
+	}(this));
+	if(v != null) v = this.readValueNext(v);
+	return v;
+}
+hxtml2.CSSParser.prototype.readHex = function() {
+	var start = this.pos;
+	while(true) {
+		var c = this.css.cca(this.pos++);
+		if(c >= 65 && c <= 70 || c >= 97 && c <= 102 || c >= 48 && c <= 57) continue;
+		this.pos--;
+		break;
+	}
+	return this.css.substr(start,this.pos - start);
+}
+hxtml2.CSSParser.prototype.readValueUnit = function(f,i) {
+	var t = this.readToken();
+	return (function($this) {
+		var $r;
+		var $e = (t);
+		switch( $e[1] ) {
+		case 0:
+			var i1 = $e[2];
+			$r = hxtml2.Value.VUnit(f,i1);
+			break;
+		case 11:
+			$r = hxtml2.Value.VUnit(f,"%");
+			break;
+		default:
+			$r = (function($this) {
+				var $r;
+				$this.tokens.push(t);
+				$r = i != null?hxtml2.Value.VInt(i):hxtml2.Value.VFloat(f);
+				return $r;
+			}($this));
+		}
+		return $r;
+	}(this));
+}
+hxtml2.CSSParser.prototype.readValueNext = function(v) {
+	var t = this.readToken();
+	return (function($this) {
+		var $r;
+		switch( (t)[1] ) {
+		case 6:
+			$r = (function($this) {
+				var $r;
+				var $e = (v);
+				switch( $e[1] ) {
+				case 0:
+					var i = $e[2];
+					$r = (function($this) {
+						var $r;
+						switch(i) {
+						case "url":
+							$r = $this.readValueNext(hxtml2.Value.VUrl($this.readUrl()));
+							break;
+						default:
+							$r = (function($this) {
+								var $r;
+								$this.tokens.push(t);
+								$r = v;
+								return $r;
+							}($this));
+						}
+						return $r;
+					}($this));
+					break;
+				default:
+					$r = (function($this) {
+						var $r;
+						$this.tokens.push(t);
+						$r = v;
+						return $r;
+					}($this));
+				}
+				return $r;
+			}($this));
+			break;
+		case 8:
+			$r = (function($this) {
+				var $r;
+				var t1 = $this.readToken();
+				$r = (function($this) {
+					var $r;
+					var $e = (t1);
+					switch( $e[1] ) {
+					case 0:
+						var i = $e[2];
+						$r = hxtml2.Value.VLabel(i,v);
+						break;
+					default:
+						$r = $this.unexpected(t1);
+					}
+					return $r;
+				}($this));
+				return $r;
+			}($this));
+			break;
+		case 9:
+			$r = $this.loopComma(v,$this.readValue());
+			break;
+		default:
+			$r = (function($this) {
+				var $r;
+				$this.tokens.push(t);
+				var v2 = $this.readValue(true);
+				$r = v2 == null?v:$this.loopNext(v,v2);
+				return $r;
+			}($this));
+		}
+		return $r;
+	}(this));
+}
+hxtml2.CSSParser.prototype.loopNext = function(v,v2) {
+	return (function($this) {
+		var $r;
+		var $e = (v2);
+		switch( $e[1] ) {
+		case 7:
+			var l = $e[2];
+			$r = (function($this) {
+				var $r;
+				l.unshift(v);
+				$r = v2;
+				return $r;
+			}($this));
+			break;
+		case 6:
+			var l = $e[2];
+			$r = (function($this) {
+				var $r;
+				l[0] = $this.loopNext(v,l[0]);
+				$r = v2;
+				return $r;
+			}($this));
+			break;
+		case 9:
+			var v21 = $e[3], lab = $e[2];
+			$r = hxtml2.Value.VLabel(lab,$this.loopNext(v,v21));
+			break;
+		default:
+			$r = hxtml2.Value.VGroup([v,v2]);
+		}
+		return $r;
+	}(this));
+}
+hxtml2.CSSParser.prototype.loopComma = function(v,v2) {
+	return (function($this) {
+		var $r;
+		var $e = (v2);
+		switch( $e[1] ) {
+		case 6:
+			var l = $e[2];
+			$r = (function($this) {
+				var $r;
+				l.unshift(v);
+				$r = v2;
+				return $r;
+			}($this));
+			break;
+		case 9:
+			var v21 = $e[3], lab = $e[2];
+			$r = hxtml2.Value.VLabel(lab,$this.loopComma(v,v21));
+			break;
+		default:
+			$r = hxtml2.Value.VList([v,v2]);
+		}
+		return $r;
+	}(this));
+}
+hxtml2.CSSParser.prototype.isSpace = function(c) {
+	return c == 32 || c == 10 || c == 13 || c == 9;
+}
+hxtml2.CSSParser.prototype.isIdentChar = function(c) {
+	return c >= 97 && c <= 122 || c >= 65 && c <= 90 || c == 45;
+}
+hxtml2.CSSParser.prototype.isNum = function(c) {
+	return c >= 48 && c <= 57;
+}
+hxtml2.CSSParser.prototype.next = function() {
+	return this.css.cca(this.pos++);
+}
+hxtml2.CSSParser.prototype.readUrl = function() {
+	var c0 = this.css.cca(this.pos++);
+	while(c0 == 32 || c0 == 10 || c0 == 13 || c0 == 9) c0 = this.css.cca(this.pos++);
+	var quote = c0;
+	if(quote == 39 || quote == 34) {
+		this.pos--;
+		var $e = (this.readToken());
+		switch( $e[1] ) {
+		case 1:
+			var s = $e[2];
+			var c01 = this.css.cca(this.pos++);
+			while(c01 == 32 || c01 == 10 || c01 == 13 || c01 == 9) c01 = this.css.cca(this.pos++);
+			if(c01 != 41) throw "Invalid char " + String.fromCharCode(c01);
+			return s;
+		default:
+			throw "assert";
+		}
+	}
+	var start = this.pos - 1;
+	while(true) {
+		if(c0 != c0) break;
+		c0 = this.css.cca(this.pos++);
+		if(c0 == 41) break;
+	}
+	return StringTools.trim(this.css.substr(start,this.pos - start - 1));
+}
+hxtml2.CSSParser.prototype.readToken = function() {
+	var t = this.tokens.pop();
+	if(t != null) return t;
+	while(true) {
+		var c = this.css.cca(this.pos++);
+		if(c != c) return hxtml2.Token.TEof;
+		if(c == 32 || c == 10 || c == 13 || c == 9) {
+			if(this.spacesTokens) {
+				while(this.isSpace(this.css.cca(this.pos++))) {
+				}
+				this.pos--;
+				return hxtml2.Token.TSpaces;
+			}
+			continue;
+		}
+		if(c >= 97 && c <= 122 || c >= 65 && c <= 90 || c == 45) {
+			var pos = this.pos - 1;
+			do c = this.css.cca(this.pos++); while(c >= 97 && c <= 122 || c >= 65 && c <= 90 || c == 45);
+			this.pos--;
+			return hxtml2.Token.TIdent(this.css.substr(pos,this.pos - pos).toLowerCase());
+		}
+		if(c >= 48 && c <= 57) {
+			var i = 0;
+			do {
+				i = i * 10 + (c - 48);
+				c = this.css.cca(this.pos++);
+			} while(c >= 48 && c <= 57);
+			if(c == 46) {
+				var f = i;
+				var k = 0.1;
+				while(this.isNum(c = this.css.cca(this.pos++))) {
+					f += (c - 48) * k;
+					k *= 0.1;
+				}
+				this.pos--;
+				return hxtml2.Token.TFloat(f);
+			}
+			this.pos--;
+			return hxtml2.Token.TInt(i);
+		}
+		switch(c) {
+		case 58:
+			return hxtml2.Token.TDblDot;
+		case 35:
+			return hxtml2.Token.TSharp;
+		case 40:
+			return hxtml2.Token.TPOpen;
+		case 41:
+			return hxtml2.Token.TPClose;
+		case 33:
+			return hxtml2.Token.TExclam;
+		case 37:
+			return hxtml2.Token.TPercent;
+		case 59:
+			return hxtml2.Token.TSemicolon;
+		case 46:
+			return hxtml2.Token.TDot;
+		case 123:
+			return hxtml2.Token.TBrOpen;
+		case 125:
+			return hxtml2.Token.TBrClose;
+		case 44:
+			return hxtml2.Token.TComma;
+		case 47:
+			if((c = this.css.cca(this.pos++)) != 42) {
+				this.pos--;
+				return hxtml2.Token.TSlash;
+			}
+			while(true) {
+				while((c = this.css.cca(this.pos++)) != 42) if(c != c) throw "Unclosed comment";
+				c = this.css.cca(this.pos++);
+				if(c == 47) break;
+				if(c != c) throw "Unclosed comment";
+			}
+			return this.readToken();
+		case 39:case 34:
+			var pos = this.pos;
+			var k;
+			while((k = this.css.cca(this.pos++)) != c) {
+				if(k != k) throw "Unclosed string constant";
+				if(k == 92) {
+					throw "todo";
+					continue;
+				}
+			}
+			return hxtml2.Token.TString(this.css.substr(pos,this.pos - pos - 1));
+		default:
+		}
+		this.pos--;
+		throw "Invalid char " + this.css.charAt(this.pos);
+	}
+	return null;
 }
 hxtml2.CSSParser.prototype.__class__ = hxtml2.CSSParser;
 utest.Assertation = { __ename__ : ["utest","Assertation"], __constructs__ : ["Success","Failure","Error","SetupError","TeardownError","TimeoutError","AsyncError","Warning"] }
@@ -9921,29 +10827,28 @@ hxtml2.HTMLParser.__name__ = ["hxtml2","HTMLParser"];
 hxtml2.HTMLParser.prototype._cssParser = null;
 hxtml2.HTMLParser.prototype.parse = function(htmlDOM) {
 	var htmlPageData = new hxtml2.HTMLPageData(this._cssParser);
-	this.doParse(htmlDOM,htmlPageData);
+	this._doParse(htmlDOM,htmlPageData);
 	return htmlPageData;
 }
-hxtml2.HTMLParser.prototype.doParse = function(htmlDOM,htmlPageData,parent) {
-	haxe.Log.trace("doParse " + htmlDOM,{ fileName : "HTMLParser.hx", lineNumber : 41, className : "hxtml2.HTMLParser", methodName : "doParse"});
+hxtml2.HTMLParser.prototype._doParse = function(htmlDOM,htmlPageData,parent) {
+	haxe.Log.trace("_doParse " + htmlDOM,{ fileName : "HTMLParser.hx", lineNumber : 41, className : "hxtml2.HTMLParser", methodName : "_doParse"});
 	var element = null;
 	switch(htmlDOM.nodeType) {
 	case Xml.CData:
 		throw "assert";
 		break;
 	case Xml.PCData:case Xml.Comment:
-		haxe.Log.trace("added text :" + htmlDOM.getNodeValue(),{ fileName : "HTMLParser.hx", lineNumber : 51, className : "hxtml2.HTMLParser", methodName : "doParse"});
+		haxe.Log.trace("added text :" + htmlDOM.getNodeValue(),{ fileName : "HTMLParser.hx", lineNumber : 51, className : "hxtml2.HTMLParser", methodName : "_doParse"});
 		element = new cocktailCore.textElement.js.TextElement(htmlDOM.getNodeValue());
 		if(parent != null) parent.addText(element);
 		return;
 	}
-	var allowSpaces = true, allowComments = false;
 	var elementType = hxtml2.ElementTypeValue.unknown;
 	try {
 		elementType = Type.createEnum(hxtml2.ElementTypeValue,htmlDOM.getNodeName().toLowerCase());
 	} catch( msg ) {
 		if( js.Boot.__instanceof(msg,String) ) {
-			haxe.Log.trace("Error, unknown tag " + htmlDOM.getNodeName().toLowerCase() + "\n" + msg,{ fileName : "HTMLParser.hx", lineNumber : 67, className : "hxtml2.HTMLParser", methodName : "doParse"});
+			haxe.Log.trace("Error, unknown tag " + htmlDOM.getNodeName().toLowerCase() + "\n" + msg,{ fileName : "HTMLParser.hx", lineNumber : 66, className : "hxtml2.HTMLParser", methodName : "_doParse"});
 			elementType = hxtml2.ElementTypeValue.unknown;
 		} else throw(msg);
 	}
@@ -9971,7 +10876,7 @@ hxtml2.HTMLParser.prototype.doParse = function(htmlDOM,htmlPageData,parent) {
 	while( $it1.hasNext() ) {
 		var child = $it1.next();
 		if(child.nodeType == Xml.PCData && new EReg("^[ \n\r\t]*$","").match(child.getNodeValue())) continue;
-		this.doParse(child,htmlPageData,element);
+		this._doParse(child,htmlPageData,element);
 	}
 }
 hxtml2.HTMLParser.prototype.__class__ = hxtml2.HTMLParser;
@@ -10151,6 +11056,7 @@ cocktailCore.domElement.js.GraphicDOMElement.JOINT_STYLE_VALUE_BEVEL = "bevel";
 cocktailCore.domElement.js.GraphicDOMElement.CANVAS_PATTERN_REPEAT = "repeat";
 cocktailCore.domElement.js.GraphicDOMElement.CANVAS_PATTERN_NO_REPEAT = "no-repeat";
 utest.TestHandler.POLLING_TIME = 10;
+hxtml2.EnumStringConnectionManager.enumStringConnectionArray = [{ enumValue : cocktail.unit.LengthValue._in, stringValue : "in"},{ enumValue : cocktail.style.MarginStyleValue.autoValue, stringValue : "auto"},{ enumValue : cocktail.style.DisplayStyleValue.inlineStyle, stringValue : "inline"},{ enumValue : cocktail.style.DisplayStyleValue.inlineBlock, stringValue : "inline-block"},{ enumValue : cocktail.style.PositionStyleValue.staticStyle, stringValue : "static"}];
 Xml.enode = new EReg("^<([a-zA-Z0-9:_-]+)","");
 Xml.ecdata = new EReg("^<!\\[CDATA\\[","i");
 Xml.edoctype = new EReg("^<!DOCTYPE ","i");

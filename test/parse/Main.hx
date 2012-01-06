@@ -30,6 +30,9 @@ class Main
 
     static function main():Void
     {
+//    	new Main().testHTMLParser();
+ //   	return;
+    	
 		var runner = new Runner();
 		runner.addCase(new Main());
 		Report.create(runner);
@@ -45,20 +48,28 @@ class Main
 		var htmlData:String = "<html>
 			<head>
 			</head>
-			<body>
-				<div id='main'>
-					<H1>Test of an HTML page</H1>
-					Some random text with an image here <img src='./test.png' style='width: 100%; height: 50px' />. And a dot at the end.
-					<p>
+			<body style='display:block; '>
+				<div id='main' style='display:block; '>
+					<H1 style='display:block; font-size:42px; margin-left: 154px' >Test of an HTML page</H1>
+					Some random text with an image here <img src='./test.png' style='position : relative ; display:inline; right:0%; top: 455px; width: 50%; height: 50px' />. And a dot at the end.
+					<p style='display:block; '>
 						and here is a paragraph
 					</p>
 				</div>
 			</body>
 		</html>";
-		
+/*		var htmlData:String = "<html>
+			<head>
+			</head>
+			<body style='display:block; '>
+				<div id='main' style='display:block; '>
+					<H1 style='display:block; font-size:42em; margin-left: 154px' >Test of an HTML page</H1><p style='display:block; '>Some random text with an image here </p><img src='./test.png' style='position : relative ; display:inline; right:0%; top: 455px; width: 50%; height: 50px' /><p style='display:block; '>. And a dot at the end.</p><p style='display:block; '>and here is a paragraph	</p>
+				</div>
+			</body>
+		</html>";
+*/		
 		
 		var xml:Xml = Xml.parse(htmlData);
-		
 		trace(xml);
 		
 		var htmlPageData:HTMLPageData = null;
@@ -75,6 +86,7 @@ class Main
 		(new BodyDOMElement()).addChild(htmlPageData.containerDOMElement);
 		
 		Assert.notEquals(htmlPageData, null);
+
 
 //		trace(htmlPageData);
 		
@@ -131,7 +143,7 @@ class Main
 		domElement = childData.child; // the TextElement
 		Assert.is(domElement, TextElement);
 		str = cast(domElement, TextElement).text; if (str.nodeValue != null) str = str.nodeValue;
-		Assert.equals(str, "\n\t\t\t\t\t\tand here is a paragraph\n");
+		Assert.equals(str, "\n\t\t\t\t\t\tand here is a paragraph\n\t\t\t\t\t");
 
 		trace("testHTMLParser END");
 	}

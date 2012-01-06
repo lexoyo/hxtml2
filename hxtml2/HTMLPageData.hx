@@ -3,6 +3,7 @@ package hxtml2;
 //import cocktail.domElement.BodyDOMElement;
 import cocktail.domElement.ContainerDOMElement;
 import cocktail.domElement.ImageDOMElement;
+import cocktail.domElement.DOMElement;
 import cocktail.nativeElement.NativeElementManager;
 import cocktail.nativeElement.NativeElementData;
 
@@ -113,11 +114,11 @@ class HTMLPageData
 		if (parent != null)
 			parent.addChild(element);
 		// set attributes
-		setAttributes(elementType, attributes);
+		setAttributes(element, attributes);
 		// return the new element
 		return element;
 	}
-	public function setAttributes(element:Dynamic, attributes:Hash<String>)
+	public function setAttributes(element:DOMElement, attributes:Hash<String>)
 	{
 		// get the id
 		var id:String="";
@@ -132,7 +133,7 @@ class HTMLPageData
 		if (attributes.exists("style"))
 		{
 			var styles:String = attributes.get("style");
-			_cssParser.setStyleFromString(element, styles);
+			_cssParser.setStyleFromString(element.style, styles);
 		}
 	}
 }
