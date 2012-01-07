@@ -45,6 +45,7 @@ class Main
 	public function testHTMLParser()
 	{
 		trace("testHTMLParser START");
+/*		
 		var htmlData:String = "<html>
 			<head>
 			</head>
@@ -58,16 +59,17 @@ class Main
 				</div>
 			</body>
 		</html>";
-/*		var htmlData:String = "<html>
+/**/
+		var htmlData:String = "<html>
 			<head>
 			</head>
-			<body style='display:block; '>
+			<body style='display:block; margin:1px 2px 3px 4px; '>
 				<div id='main' style='display:block; '>
-					<H1 style='display:block; font-size:42em; margin-left: 154px' >Test of an HTML page</H1><p style='display:block; '>Some random text with an image here </p><img src='./test.png' style='position : relative ; display:inline; right:0%; top: 455px; width: 50%; height: 50px' /><p style='display:block; '>. And a dot at the end.</p><p style='display:block; '>and here is a paragraph	</p>
+					<H1 style='display:block; font-family:serif; font-size:42em; margin-left: 154px' >Test of an HTML page</H1><p style='display:block; '>Some random text with an image here </p><img src='./test.png' style='position : relative ; display:inline; right:0%; top: 455px; width: 50%; height: 50px' /><p style='display:block; font-family:monospace, serif; '>. And a dot at the end.</p><p style='display:block; '>and here is a paragraph	</p>
 				</div>
 			</body>
 		</html>";
-*/		
+/**/		
 		
 		var xml:Xml = Xml.parse(htmlData);
 		trace(xml);

@@ -3698,6 +3698,501 @@ haxe.io.Bytes.prototype.getData = function() {
 	return this.b;
 }
 haxe.io.Bytes.prototype.__class__ = haxe.io.Bytes;
+if(typeof hxtml2=='undefined') hxtml2 = {}
+hxtml2.StyleConverter = function(p) {
+}
+hxtml2.StyleConverter.__name__ = ["hxtml2","StyleConverter"];
+hxtml2.StyleConverter.valueToUnitArray = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 7:
+		case 6:
+			var array = $e[2];
+			$r = array;
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.valueToValueWithUnit = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 2:
+			var unit = $e[3], value = $e[2];
+			$r = { value : value, unit : unit};
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.valueToString = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 0:
+		case 1:
+		case 5:
+		case 8:
+			var value = $e[2];
+			$r = value;
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.valueToFloat = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 3:
+			var value = $e[2];
+			$r = value;
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.valueToInt = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 4:
+			var value = $e[2];
+			$r = value;
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.valueToFontFamilyStyle = function(v) {
+	var stringValue = hxtml2.StyleConverter.valueToString(v);
+	return (function($this) {
+		var $r;
+		switch(stringValue) {
+		case "serif":
+			$r = cocktail.style.FontFamilyStyleValue.genericFamily(cocktail.style.GenericFontFamilyValue.serif);
+			break;
+		case "sans-serif":
+			$r = cocktail.style.FontFamilyStyleValue.genericFamily(cocktail.style.GenericFontFamilyValue.sansSerif);
+			break;
+		case "monospace":
+			$r = cocktail.style.FontFamilyStyleValue.genericFamily(cocktail.style.GenericFontFamilyValue.monospace);
+			break;
+		default:
+			$r = cocktail.style.FontFamilyStyleValue.familyName(stringValue);
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.getMarginStyleValue = function(unit,value) {
+	return (function($this) {
+		var $r;
+		switch(unit) {
+		case "%":
+			$r = cocktail.style.MarginStyleValue.percent(value);
+			break;
+		default:
+			$r = cocktail.style.MarginStyleValue.length(hxtml2.StyleConverter.getLengthValue(unit,value));
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.getPaddingStyleValue = function(unit,value) {
+	return (function($this) {
+		var $r;
+		switch(unit) {
+		case "%":
+			$r = cocktail.style.PaddingStyleValue.percent(value);
+			break;
+		default:
+			$r = cocktail.style.PaddingStyleValue.length(hxtml2.StyleConverter.getLengthValue(unit,value));
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.getDimensionStyleValue = function(unit,value) {
+	return (function($this) {
+		var $r;
+		switch(unit) {
+		case "%":
+			$r = cocktail.style.DimensionStyleValue.percent(value);
+			break;
+		default:
+			$r = cocktail.style.DimensionStyleValue.length(hxtml2.StyleConverter.getLengthValue(unit,value));
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.getLengthValue = function(unit,value) {
+	return (function($this) {
+		var $r;
+		switch(unit) {
+		case "px":
+			$r = cocktail.unit.LengthValue.px(value);
+			break;
+		case "cm":
+			$r = cocktail.unit.LengthValue.cm(value);
+			break;
+		case "mm":
+			$r = cocktail.unit.LengthValue.mm(value);
+			break;
+		case "pt":
+			$r = cocktail.unit.LengthValue.pt(value);
+			break;
+		case "pc":
+			$r = cocktail.unit.LengthValue.pc(value);
+			break;
+		case "in":
+			$r = cocktail.unit.LengthValue._in(value);
+			break;
+		case "em":
+			$r = cocktail.unit.LengthValue.em(value);
+			break;
+		case "ex":
+			$r = cocktail.unit.LengthValue.ex(value);
+			break;
+		default:
+			$r = (function($this) {
+				var $r;
+				throw "unknown unit \"" + unit + "\"";
+				return $r;
+			}($this));
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.getKeywordFromColor = function(value) {
+	return (function($this) {
+		var $r;
+		switch(value) {
+		case "aqua":
+			$r = cocktail.unit.ColorKeywordValue.aqua;
+			break;
+		case "black":
+			$r = cocktail.unit.ColorKeywordValue.black;
+			break;
+		case "blue":
+			$r = cocktail.unit.ColorKeywordValue.blue;
+			break;
+		case "fuchsia":
+			$r = cocktail.unit.ColorKeywordValue.fuchsia;
+			break;
+		case "gray":
+			$r = cocktail.unit.ColorKeywordValue.gray;
+			break;
+		case "green":
+			$r = cocktail.unit.ColorKeywordValue.green;
+			break;
+		case "lime":
+			$r = cocktail.unit.ColorKeywordValue.lime;
+			break;
+		case "maroon":
+			$r = cocktail.unit.ColorKeywordValue.maroon;
+			break;
+		case "navy":
+			$r = cocktail.unit.ColorKeywordValue.navy;
+			break;
+		case "olive":
+			$r = cocktail.unit.ColorKeywordValue.olive;
+			break;
+		case "orange":
+			$r = cocktail.unit.ColorKeywordValue.orange;
+			break;
+		case "purple":
+			$r = cocktail.unit.ColorKeywordValue.purple;
+			break;
+		case "red":
+			$r = cocktail.unit.ColorKeywordValue.red;
+			break;
+		case "silver":
+			$r = cocktail.unit.ColorKeywordValue.silver;
+			break;
+		case "teal":
+			$r = cocktail.unit.ColorKeywordValue.teal;
+			break;
+		case "white":
+			$r = cocktail.unit.ColorKeywordValue.white;
+			break;
+		case "yellow":
+			$r = cocktail.unit.ColorKeywordValue.yellow;
+			break;
+		default:
+			$r = (function($this) {
+				var $r;
+				throw "unknown color \"" + value + "\"";
+				return $r;
+			}($this));
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.getCSSFontSize = function(value) {
+	haxe.Log.trace("getCSSFontSize " + value,{ fileName : "StyleConverter.hx", lineNumber : 204, className : "hxtml2.StyleConverter", methodName : "getCSSFontSize"});
+	var valueString = hxtml2.StyleConverter.valueToString(value);
+	if(valueString != null) return (function($this) {
+		var $r;
+		switch(valueString) {
+		case "xx-small":
+			$r = cocktail.style.FontSizeStyleValue.absoluteSize(cocktail.unit.FontSizeAbsoluteSizeValue.xxSmall);
+			break;
+		case "x-small":
+			$r = cocktail.style.FontSizeStyleValue.absoluteSize(cocktail.unit.FontSizeAbsoluteSizeValue.xSmall);
+			break;
+		case "small":
+			$r = cocktail.style.FontSizeStyleValue.absoluteSize(cocktail.unit.FontSizeAbsoluteSizeValue.small);
+			break;
+		case "medium":
+			$r = cocktail.style.FontSizeStyleValue.absoluteSize(cocktail.unit.FontSizeAbsoluteSizeValue.medium);
+			break;
+		case "large":
+			$r = cocktail.style.FontSizeStyleValue.absoluteSize(cocktail.unit.FontSizeAbsoluteSizeValue.large);
+			break;
+		case "x-large":
+			$r = cocktail.style.FontSizeStyleValue.absoluteSize(cocktail.unit.FontSizeAbsoluteSizeValue.xLarge);
+			break;
+		case "xx-large":
+			$r = cocktail.style.FontSizeStyleValue.absoluteSize(cocktail.unit.FontSizeAbsoluteSizeValue.xxLarge);
+			break;
+		case "larger":
+			$r = cocktail.style.FontSizeStyleValue.relativeSize(cocktail.unit.FontSizeRelativeSizeValue.larger);
+			break;
+		case "smaller":
+			$r = cocktail.style.FontSizeStyleValue.relativeSize(cocktail.unit.FontSizeRelativeSizeValue.smaller);
+			break;
+		}
+		return $r;
+	}(this)); else {
+		var valueWithUnit = hxtml2.StyleConverter.valueToValueWithUnit(value);
+		if(valueWithUnit != null) return (function($this) {
+			var $r;
+			switch(valueWithUnit.unit) {
+			case "%":
+				$r = cocktail.style.FontSizeStyleValue.percentage(Math.round(valueWithUnit.value));
+				break;
+			default:
+				$r = cocktail.style.FontSizeStyleValue.length(hxtml2.StyleConverter.getLengthValue(valueWithUnit.unit,Math.round(valueWithUnit.value)));
+			}
+			return $r;
+		}(this));
+		return null;
+	}
+}
+hxtml2.StyleConverter.applyStyle = function(styleName,v,s) {
+	haxe.Log.trace("applyStyle " + styleName + ", " + v + ", " + s,{ fileName : "StyleConverter.hx", lineNumber : 258, className : "hxtml2.StyleConverter", methodName : "applyStyle"});
+	switch(styleName) {
+	case "margin":
+		var values = hxtml2.StyleConverter.valueToUnitArray(v);
+		if(values != null) switch(values.length) {
+		case 1:
+			hxtml2.StyleConverter.applyStyle("margin-top",values[0],s);
+			hxtml2.StyleConverter.applyStyle("margin-right",values[0],s);
+			hxtml2.StyleConverter.applyStyle("margin-bottom",values[0],s);
+			hxtml2.StyleConverter.applyStyle("margin-left",values[0],s);
+			return true;
+		case 2:
+			hxtml2.StyleConverter.applyStyle("margin-top",values[0],s);
+			hxtml2.StyleConverter.applyStyle("margin-right",values[1],s);
+			hxtml2.StyleConverter.applyStyle("margin-bottom",values[0],s);
+			hxtml2.StyleConverter.applyStyle("margin-left",values[1],s);
+			return true;
+		case 3:
+			hxtml2.StyleConverter.applyStyle("margin-top",values[0],s);
+			hxtml2.StyleConverter.applyStyle("margin-right",values[1],s);
+			hxtml2.StyleConverter.applyStyle("margin-bottom",values[2],s);
+			hxtml2.StyleConverter.applyStyle("margin-left",values[1],s);
+			return true;
+		case 4:
+			hxtml2.StyleConverter.applyStyle("margin-top",values[0],s);
+			hxtml2.StyleConverter.applyStyle("margin-right",values[1],s);
+			hxtml2.StyleConverter.applyStyle("margin-bottom",values[2],s);
+			hxtml2.StyleConverter.applyStyle("margin-left",values[3],s);
+			return true;
+		}
+		break;
+	case "margin-left":
+		var valueWithUnit = hxtml2.StyleConverter.valueToValueWithUnit(v);
+		if(valueWithUnit != null) {
+			s.setMarginLeft(hxtml2.StyleConverter.getMarginStyleValue(valueWithUnit.unit,Math.round(valueWithUnit.value)));
+			return true;
+		}
+		break;
+	case "margin-top":
+		var valueWithUnit = hxtml2.StyleConverter.valueToValueWithUnit(v);
+		if(valueWithUnit != null) {
+			s.setMarginTop(hxtml2.StyleConverter.getMarginStyleValue(valueWithUnit.unit,Math.round(valueWithUnit.value)));
+			return true;
+		}
+		break;
+	case "margin-right":
+		var valueWithUnit = hxtml2.StyleConverter.valueToValueWithUnit(v);
+		if(valueWithUnit != null) {
+			s.setMarginRight(hxtml2.StyleConverter.getMarginStyleValue(valueWithUnit.unit,Math.round(valueWithUnit.value)));
+			return true;
+		}
+		break;
+	case "margin-bottom":
+		var valueWithUnit = hxtml2.StyleConverter.valueToValueWithUnit(v);
+		if(valueWithUnit != null) {
+			s.setMarginBottom(hxtml2.StyleConverter.getMarginStyleValue(valueWithUnit.unit,Math.round(valueWithUnit.value)));
+			return true;
+		}
+		break;
+	case "display":
+		switch(hxtml2.StyleConverter.valueToString(v)) {
+		case "none":
+			s.setDisplay(cocktail.style.DisplayStyleValue.none);
+			break;
+		case "inline":
+			s.setDisplay(cocktail.style.DisplayStyleValue.inlineStyle);
+			break;
+		case "block":
+			s.setDisplay(cocktail.style.DisplayStyleValue.block);
+			break;
+		case "inline-block":
+			s.setDisplay(cocktail.style.DisplayStyleValue.inlineBlock);
+			break;
+		default:
+			throw "unknown display style \"" + v + "\"";
+		}
+		return true;
+	case "padding":
+		var values = hxtml2.StyleConverter.valueToUnitArray(v);
+		if(values != null) switch(values.length) {
+		case 1:
+			hxtml2.StyleConverter.applyStyle("padding-top",values[0],s);
+			hxtml2.StyleConverter.applyStyle("padding-right",values[0],s);
+			hxtml2.StyleConverter.applyStyle("padding-bottom",values[0],s);
+			hxtml2.StyleConverter.applyStyle("padding-left",values[0],s);
+			return true;
+		case 2:
+			hxtml2.StyleConverter.applyStyle("padding-top",values[0],s);
+			hxtml2.StyleConverter.applyStyle("padding-right",values[1],s);
+			hxtml2.StyleConverter.applyStyle("padding-bottom",values[0],s);
+			hxtml2.StyleConverter.applyStyle("padding-left",values[1],s);
+			return true;
+		case 3:
+			hxtml2.StyleConverter.applyStyle("padding-top",values[0],s);
+			hxtml2.StyleConverter.applyStyle("padding-right",values[1],s);
+			hxtml2.StyleConverter.applyStyle("padding-bottom",values[2],s);
+			hxtml2.StyleConverter.applyStyle("padding-left",values[1],s);
+			return true;
+		case 4:
+			hxtml2.StyleConverter.applyStyle("padding-top",values[0],s);
+			hxtml2.StyleConverter.applyStyle("padding-right",values[1],s);
+			hxtml2.StyleConverter.applyStyle("padding-bottom",values[2],s);
+			hxtml2.StyleConverter.applyStyle("padding-left",values[3],s);
+			return true;
+		}
+		break;
+	case "padding-left":
+		var valueWithUnit = hxtml2.StyleConverter.valueToValueWithUnit(v);
+		if(valueWithUnit != null) {
+			s.setPaddingLeft(hxtml2.StyleConverter.getPaddingStyleValue(valueWithUnit.unit,Math.round(valueWithUnit.value)));
+			return true;
+		}
+		break;
+	case "padding-right":
+		var valueWithUnit = hxtml2.StyleConverter.valueToValueWithUnit(v);
+		if(valueWithUnit != null) {
+			s.setPaddingRight(hxtml2.StyleConverter.getPaddingStyleValue(valueWithUnit.unit,Math.round(valueWithUnit.value)));
+			return true;
+		}
+		break;
+	case "padding-bottom":
+		var valueWithUnit = hxtml2.StyleConverter.valueToValueWithUnit(v);
+		if(valueWithUnit != null) {
+			s.setPaddingBottom(hxtml2.StyleConverter.getPaddingStyleValue(valueWithUnit.unit,Math.round(valueWithUnit.value)));
+			return true;
+		}
+		break;
+	case "padding-top":
+		var valueWithUnit = hxtml2.StyleConverter.valueToValueWithUnit(v);
+		if(valueWithUnit != null) {
+			s.setPaddingTop(hxtml2.StyleConverter.getPaddingStyleValue(valueWithUnit.unit,Math.round(valueWithUnit.value)));
+			return true;
+		}
+		break;
+	case "width":
+		var valueWithUnit = hxtml2.StyleConverter.valueToValueWithUnit(v);
+		if(valueWithUnit != null) {
+			s.setWidth(hxtml2.StyleConverter.getDimensionStyleValue(valueWithUnit.unit,Math.round(valueWithUnit.value)));
+			return true;
+		}
+		break;
+	case "height":
+		var valueWithUnit = hxtml2.StyleConverter.valueToValueWithUnit(v);
+		if(valueWithUnit != null) {
+			s.setHeight(hxtml2.StyleConverter.getDimensionStyleValue(valueWithUnit.unit,Math.round(valueWithUnit.value)));
+			return true;
+		}
+		break;
+	case "background-color":
+		throw "not implemented";
+		break;
+	case "background-repeat":
+		throw "not implemented";
+		break;
+	case "background-image":
+		throw "not implemented";
+		break;
+	case "background-attachment":
+		throw "not implemented";
+		break;
+	case "background-position":
+		throw "not implemented";
+		break;
+	case "-inner-bgpos-top":
+		throw "not implemented";
+		break;
+	case "-inner-bgpos-left":
+		throw "not implemented";
+		break;
+	case "background":
+		throw "not implemented";
+		break;
+	case "font-family":
+		var values = hxtml2.StyleConverter.valueToUnitArray(v);
+		if(values == null) {
+			values = new Array();
+			values.push(v);
+		}
+		if(values != null) {
+			s.setFontFamily(new Array());
+			var _g = 0;
+			while(_g < values.length) {
+				var val = values[_g];
+				++_g;
+				s.getFontFamily().push(hxtml2.StyleConverter.valueToFontFamilyStyle(val));
+			}
+			return true;
+		}
+		break;
+	case "font-size":
+		s.setFontSize(hxtml2.StyleConverter.getCSSFontSize(v));
+		return true;
+	default:
+		throw "Not implemented '" + styleName + "' = " + Std.string(v);
+	}
+	return false;
+}
+hxtml2.StyleConverter.prototype.__class__ = hxtml2.StyleConverter;
 cocktailCore.style.computer.boxComputers.BlockBoxStylesComputer = function(p) {
 	if( p === $_ ) return;
 	cocktailCore.style.computer.BoxStylesComputer.call(this);
@@ -3859,7 +4354,6 @@ utest.ui.common.IReport.prototype.displaySuccessResults = null;
 utest.ui.common.IReport.prototype.displayHeader = null;
 utest.ui.common.IReport.prototype.setHandler = null;
 utest.ui.common.IReport.prototype.__class__ = utest.ui.common.IReport;
-if(typeof hxtml2=='undefined') hxtml2 = {}
 hxtml2.ElementTypeValue = { __ename__ : ["hxtml2","ElementTypeValue"], __constructs__ : ["img","body","div","style","text","link","unknown","html","head","meta","title"] }
 hxtml2.ElementTypeValue.img = ["img",0];
 hxtml2.ElementTypeValue.img.toString = $estr;
@@ -6712,24 +7206,24 @@ Main.main = function() {
 }
 Main.prototype.testHTMLParser = function() {
 	haxe.Log.trace("testHTMLParser START",{ fileName : "Main.hx", lineNumber : 47, className : "Main", methodName : "testHTMLParser"});
-	var htmlData = "<html>\n\t\t\t<head>\n\t\t\t</head>\n\t\t\t<body style='display:block; '>\n\t\t\t\t<div id='main' style='display:block; '>\n\t\t\t\t\t<H1 style='display:block; font-size:42px; margin-left: 154px' >Test of an HTML page</H1>\n\t\t\t\t\tSome random text with an image here <img src='./test.png' style='position : relative ; display:inline; right:0%; top: 455px; width: 50%; height: 50px' />. And a dot at the end.\n\t\t\t\t\t<p style='display:block; '>\n\t\t\t\t\t\tand here is a paragraph\n\t\t\t\t\t</p>\n\t\t\t\t</div>\n\t\t\t</body>\n\t\t</html>";
+	var htmlData = "<html>\n\t\t\t<head>\n\t\t\t</head>\n\t\t\t<body style='display:block; margin:1px 2px 3px 4px; '>\n\t\t\t\t<div id='main' style='display:block; '>\n\t\t\t\t\t<H1 style='display:block; font-family:serif; font-size:42em; margin-left: 154px' >Test of an HTML page</H1><p style='display:block; '>Some random text with an image here </p><img src='./test.png' style='position : relative ; display:inline; right:0%; top: 455px; width: 50%; height: 50px' /><p style='display:block; font-family:monospace, serif; '>. And a dot at the end.</p><p style='display:block; '>and here is a paragraph\t</p>\n\t\t\t\t</div>\n\t\t\t</body>\n\t\t</html>";
 	var xml = Xml.parse(htmlData);
-	haxe.Log.trace(xml,{ fileName : "Main.hx", lineNumber : 73, className : "Main", methodName : "testHTMLParser"});
+	haxe.Log.trace(xml,{ fileName : "Main.hx", lineNumber : 75, className : "Main", methodName : "testHTMLParser"});
 	var htmlPageData = null;
 	htmlPageData = new hxtml2.HTMLParser().parse(xml.firstElement());
 	new cocktailCore.domElement.js.BodyDOMElement().addChild(htmlPageData.containerDOMElement);
-	utest.Assert.notEquals(htmlPageData,null,null,{ fileName : "Main.hx", lineNumber : 88, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.notEquals(htmlPageData,null,null,{ fileName : "Main.hx", lineNumber : 90, className : "Main", methodName : "testHTMLParser"});
 	var childData;
 	var domElementDivMain;
 	var domElement;
 	var str;
 	childData = htmlPageData.containerDOMElement.getChildren()[0];
 	domElementDivMain = childData.child;
-	utest.Assert["is"](domElementDivMain,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 101, className : "Main", methodName : "testHTMLParser"});
-	utest.Assert.equals(domElementDivMain.getChildren().length,5,null,{ fileName : "Main.hx", lineNumber : 102, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElementDivMain,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 103, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(domElementDivMain.getChildren().length,5,null,{ fileName : "Main.hx", lineNumber : 104, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[0];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 108, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 110, className : "Main", methodName : "testHTMLParser"});
 	childData = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -6738,7 +7232,7 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getChildren()[0];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 112, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 114, className : "Main", methodName : "testHTMLParser"});
 	str = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -6747,10 +7241,10 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getText();
 	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,"Test of an HTML page",null,{ fileName : "Main.hx", lineNumber : 114, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(str,"Test of an HTML page",null,{ fileName : "Main.hx", lineNumber : 116, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[1];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 119, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 121, className : "Main", methodName : "testHTMLParser"});
 	str = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -6759,20 +7253,20 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getText();
 	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,"\n\t\t\t\t\tSome random text with an image here ",null,{ fileName : "Main.hx", lineNumber : 121, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(str,"\n\t\t\t\t\tSome random text with an image here ",null,{ fileName : "Main.hx", lineNumber : 123, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[2];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.domElement.js.ImageDOMElement,null,{ fileName : "Main.hx", lineNumber : 126, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.domElement.js.ImageDOMElement,null,{ fileName : "Main.hx", lineNumber : 128, className : "Main", methodName : "testHTMLParser"});
 	utest.Assert.equals(((function($this) {
 		var $r;
 		var $t = domElement;
 		if(Std["is"]($t,cocktailCore.domElement.js.ImageDOMElement)) $t; else throw "Class cast error";
 		$r = $t;
 		return $r;
-	}(this))).getSrc(),"./test.png",null,{ fileName : "Main.hx", lineNumber : 127, className : "Main", methodName : "testHTMLParser"});
+	}(this))).getSrc(),"./test.png",null,{ fileName : "Main.hx", lineNumber : 129, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[3];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 132, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 134, className : "Main", methodName : "testHTMLParser"});
 	str = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -6781,17 +7275,17 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getText();
 	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,". And a dot at the end.\n\t\t\t\t\t",null,{ fileName : "Main.hx", lineNumber : 134, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(str,". And a dot at the end.\n\t\t\t\t\t",null,{ fileName : "Main.hx", lineNumber : 136, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[4];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 139, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 141, className : "Main", methodName : "testHTMLParser"});
 	utest.Assert.equals(((function($this) {
 		var $r;
 		var $t = domElement;
 		if(Std["is"]($t,cocktailCore.domElement.js.ContainerDOMElement)) $t; else throw "Class cast error";
 		$r = $t;
 		return $r;
-	}(this))).getSemantic(),"p",null,{ fileName : "Main.hx", lineNumber : 140, className : "Main", methodName : "testHTMLParser"});
+	}(this))).getSemantic(),"p",null,{ fileName : "Main.hx", lineNumber : 142, className : "Main", methodName : "testHTMLParser"});
 	childData = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -6800,7 +7294,7 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getChildren()[0];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 144, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 146, className : "Main", methodName : "testHTMLParser"});
 	str = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -6809,8 +7303,8 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getText();
 	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,"\n\t\t\t\t\t\tand here is a paragraph\n\t\t\t\t\t",null,{ fileName : "Main.hx", lineNumber : 146, className : "Main", methodName : "testHTMLParser"});
-	haxe.Log.trace("testHTMLParser END",{ fileName : "Main.hx", lineNumber : 148, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(str,"\n\t\t\t\t\t\tand here is a paragraph\n\t\t\t\t\t",null,{ fileName : "Main.hx", lineNumber : 148, className : "Main", methodName : "testHTMLParser"});
+	haxe.Log.trace("testHTMLParser END",{ fileName : "Main.hx", lineNumber : 150, className : "Main", methodName : "testHTMLParser"});
 }
 Main.prototype.__class__ = Main;
 haxe.Log = function() { }
@@ -8386,38 +8880,6 @@ cocktail.unit.AngleValue.deg = function(value) { var $x = ["deg",0,value]; $x.__
 cocktail.unit.AngleValue.grad = function(value) { var $x = ["grad",1,value]; $x.__enum__ = cocktail.unit.AngleValue; $x.toString = $estr; return $x; }
 cocktail.unit.AngleValue.rad = function(value) { var $x = ["rad",2,value]; $x.__enum__ = cocktail.unit.AngleValue; $x.toString = $estr; return $x; }
 cocktail.unit.AngleValue.turn = function(value) { var $x = ["turn",3,value]; $x.__enum__ = cocktail.unit.AngleValue; $x.toString = $estr; return $x; }
-hxtml2.EnumStringConnectionManager = function() { }
-hxtml2.EnumStringConnectionManager.__name__ = ["hxtml2","EnumStringConnectionManager"];
-hxtml2.EnumStringConnectionManager.getEnumFromStringValue = function(enumType,stringValue,arguments) {
-	haxe.Log.trace("getEnumFromStringValue(" + Type["typeof"](enumType) + ", " + stringValue + ", " + arguments + ")",{ fileName : "CSSParser.hx", lineNumber : 39, className : "hxtml2.EnumStringConnectionManager", methodName : "getEnumFromStringValue"});
-	var _g = 0, _g1 = [{ enumValue : cocktail.unit.LengthValue._in, stringValue : "in"},{ enumValue : cocktail.style.MarginStyleValue.autoValue, stringValue : "auto"},{ enumValue : cocktail.style.DisplayStyleValue.inlineStyle, stringValue : "inline"},{ enumValue : cocktail.style.DisplayStyleValue.inlineBlock, stringValue : "inline-block"},{ enumValue : cocktail.style.PositionStyleValue.staticStyle, stringValue : "static"}];
-	while(_g < _g1.length) {
-		var idx = _g1[_g];
-		++_g;
-		if(idx.stringValue == stringValue) {
-			if(arguments == null) return idx.enumValue;
-			haxe.Log.trace(idx.stringValue + " found as " + idx.enumValue,{ fileName : "CSSParser.hx", lineNumber : 49, className : "hxtml2.EnumStringConnectionManager", methodName : "getEnumFromStringValue"});
-			var res = null;
-			try {
-				res = Type.createInstance(idx.enumValue,arguments);
-			} catch( msg ) {
-				if( js.Boot.__instanceof(msg,String) ) {
-					throw "Unknown enum \"" + stringValue + "\"\n" + msg;
-				} else throw(msg);
-			}
-			return res;
-		}
-	}
-	try {
-		return Type.createEnum(enumType,stringValue,arguments);
-	} catch( msg ) {
-		if( js.Boot.__instanceof(msg,String) ) {
-		} else throw(msg);
-	}
-	throw "Unknown enum \"" + stringValue + "\"";
-	return null;
-}
-hxtml2.EnumStringConnectionManager.prototype.__class__ = hxtml2.EnumStringConnectionManager;
 hxtml2.Token = { __ename__ : ["hxtml2","Token"], __constructs__ : ["TIdent","TString","TInt","TFloat","TDblDot","TSharp","TPOpen","TPClose","TExclam","TComma","TEof","TPercent","TSemicolon","TBrOpen","TBrClose","TDot","TSpaces","TSlash"] }
 hxtml2.Token.TIdent = function(i) { var $x = ["TIdent",0,i]; $x.__enum__ = hxtml2.Token; $x.toString = $estr; return $x; }
 hxtml2.Token.TString = function(s) { var $x = ["TString",1,s]; $x.__enum__ = hxtml2.Token; $x.toString = $estr; return $x; }
@@ -8486,6 +8948,9 @@ hxtml2.Unit.EM = function(v) { var $x = ["EM",2,v]; $x.__enum__ = hxtml2.Unit; $
 hxtml2.CSSParser = function(p) {
 }
 hxtml2.CSSParser.__name__ = ["hxtml2","CSSParser"];
+hxtml2.CSSParser.applyStyle = function(styleName,v,s) {
+	return hxtml2.StyleConverter.applyStyle(styleName,v,s);
+}
 hxtml2.CSSParser.prototype.css = null;
 hxtml2.CSSParser.prototype.s = null;
 hxtml2.CSSParser.prototype.simp = null;
@@ -8493,72 +8958,8 @@ hxtml2.CSSParser.prototype.pos = null;
 hxtml2.CSSParser.prototype.spacesTokens = null;
 hxtml2.CSSParser.prototype.tokens = null;
 hxtml2.CSSParser.prototype.setStyleFromString = function(style,css) {
-	haxe.Log.trace("setStyleFromString " + style + " -  " + Type["typeof"](style),{ fileName : "CSSParser.hx", lineNumber : 157, className : "hxtml2.CSSParser", methodName : "setStyleFromString"});
+	haxe.Log.trace("setStyleFromString " + style + " -  " + Type["typeof"](style),{ fileName : "CSSParser.hx", lineNumber : 92, className : "hxtml2.CSSParser", methodName : "setStyleFromString"});
 	this.parse(css,style);
-}
-hxtml2.CSSParser.prototype.applyStyle = function(styleName,v,s) {
-	haxe.Log.trace("applyStyle " + styleName + ", " + v + ", " + s,{ fileName : "CSSParser.hx", lineNumber : 174, className : "hxtml2.CSSParser", methodName : "applyStyle"});
-	var $e = (v);
-	switch( $e[1] ) {
-	case 2:
-		var unit = $e[3], value = $e[2];
-		switch(styleName) {
-		case "width":
-			s.setWidth(this.getStyleValue(cocktail.style.DimensionStyleValue,value,unit));
-			break;
-		case "height":
-			s.setHeight(this.getStyleValue(cocktail.style.DimensionStyleValue,value,unit));
-			break;
-		case "top":
-			s.setTop(this.getStyleValue(cocktail.style.PositionOffsetStyleValue,value,unit));
-			break;
-		case "left":
-			s.setLeft(this.getStyleValue(cocktail.style.PositionOffsetStyleValue,value,unit));
-			break;
-		case "right":
-			s.setRight(this.getStyleValue(cocktail.style.PositionOffsetStyleValue,value,unit));
-			break;
-		case "bottom":
-			s.setBottom(this.getStyleValue(cocktail.style.PositionOffsetStyleValue,value,unit));
-			break;
-		case "font-size":
-			s.setFontSize(this.getStyleValue(cocktail.style.FontSizeStyleValue,value,unit));
-			break;
-		case "margin-left":
-			s.setMarginLeft(this.getStyleValue(cocktail.style.MarginStyleValue,value,unit));
-			break;
-		}
-		break;
-	case 0:
-		var value = $e[2];
-		switch(styleName) {
-		case "display":
-			s.setDisplay(hxtml2.EnumStringConnectionManager.getEnumFromStringValue(cocktail.style.DisplayStyleValue,value));
-			break;
-		case "position":
-			s.setPosition(hxtml2.EnumStringConnectionManager.getEnumFromStringValue(cocktail.style.PositionStyleValue,value));
-			break;
-		}
-		break;
-	default:
-		haxe.Log.trace("unknown style \"" + styleName + "\" of type " + v,{ fileName : "CSSParser.hx", lineNumber : 216, className : "hxtml2.CSSParser", methodName : "applyStyle"});
-		return false;
-	}
-	return true;
-}
-hxtml2.CSSParser.prototype.getStyleValue = function(enumType,value,unit) {
-	haxe.Log.trace("getStyleValue " + enumType + ", " + value + ", " + unit,{ fileName : "CSSParser.hx", lineNumber : 223, className : "hxtml2.CSSParser", methodName : "getStyleValue"});
-	return (function($this) {
-		var $r;
-		switch(unit) {
-		case "%":
-			$r = enumType.percent(Math.round(value));
-			break;
-		default:
-			$r = enumType.length(hxtml2.EnumStringConnectionManager.getEnumFromStringValue(cocktail.unit.LengthValue,unit,[value]));
-		}
-		return $r;
-	}(this));
 }
 hxtml2.CSSParser.prototype.getGroup = function(v,f) {
 	var $e = (v);
@@ -8828,7 +9229,7 @@ hxtml2.CSSParser.prototype.parseStyle = function(eof) {
 			break;
 		default:
 		}
-		if(!this.applyStyle(r,v,s)) throw "Invalid value " + Std.string(v) + " for css " + r;
+		if(!hxtml2.CSSParser.applyStyle(r,v,s)) throw "Invalid value " + Std.string(v) + " for css " + r;
 		if(this.isToken(eof)) break;
 		this.expect(hxtml2.Token.TSemicolon);
 	}
@@ -11056,7 +11457,6 @@ cocktailCore.domElement.js.GraphicDOMElement.JOINT_STYLE_VALUE_BEVEL = "bevel";
 cocktailCore.domElement.js.GraphicDOMElement.CANVAS_PATTERN_REPEAT = "repeat";
 cocktailCore.domElement.js.GraphicDOMElement.CANVAS_PATTERN_NO_REPEAT = "no-repeat";
 utest.TestHandler.POLLING_TIME = 10;
-hxtml2.EnumStringConnectionManager.enumStringConnectionArray = [{ enumValue : cocktail.unit.LengthValue._in, stringValue : "in"},{ enumValue : cocktail.style.MarginStyleValue.autoValue, stringValue : "auto"},{ enumValue : cocktail.style.DisplayStyleValue.inlineStyle, stringValue : "inline"},{ enumValue : cocktail.style.DisplayStyleValue.inlineBlock, stringValue : "inline-block"},{ enumValue : cocktail.style.PositionStyleValue.staticStyle, stringValue : "static"}];
 Xml.enode = new EReg("^<([a-zA-Z0-9:_-]+)","");
 Xml.ecdata = new EReg("^<!\\[CDATA\\[","i");
 Xml.edoctype = new EReg("^<!DOCTYPE ","i");
