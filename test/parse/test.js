@@ -7206,24 +7206,26 @@ Main.main = function() {
 }
 Main.prototype.testHTMLParser = function() {
 	haxe.Log.trace("testHTMLParser START",{ fileName : "Main.hx", lineNumber : 47, className : "Main", methodName : "testHTMLParser"});
-	var htmlData = "<html>\n\t\t\t<head>\n\t\t\t</head>\n\t\t\t<body style='display:block; margin:1px 2px 3px 4px; '>\n\t\t\t\t<div id='main' style='display:block; '>\n\t\t\t\t\t<H1 style='display:block; font-family:serif; font-size:42em; margin-left: 154px' >Test of an HTML page</H1><p style='display:block; '>Some random text with an image here </p><img src='./test.png' style='position : relative ; display:inline; right:0%; top: 455px; width: 50%; height: 50px' /><p style='display:block; font-family:monospace, serif; '>. And a dot at the end.</p><p style='display:block; '>and here is a paragraph\t</p>\n\t\t\t\t</div>\n\t\t\t</body>\n\t\t</html>";
+	var htmlData = "<html>\n\t\t\t<head>\n\t\t\t</head>\n\t\t\t<body style='display:block; margin:1px 2px 3px 4px; '>\n\t\t\t\t<div id='main' style='display:block; '>\n\t\t\t\t\t<H1 id='testID' style='display:block; font-family:serif; font-size:4em; margin-left: 15px' >Test of an HTML page</H1><p style='display:block; '>Some random text with an image here </p><img src='./test.png' /><p style='display:block; font-family:monospace, serif; '>. And a dot at the end.</p><p style='display:block; '>and here is a paragraph\t</p>\n\t\t\t\t</div>\n\t\t\t</body>\n\t\t</html>";
 	var xml = Xml.parse(htmlData);
 	haxe.Log.trace(xml,{ fileName : "Main.hx", lineNumber : 75, className : "Main", methodName : "testHTMLParser"});
 	var htmlPageData = null;
 	htmlPageData = new hxtml2.HTMLParser().parse(xml.firstElement());
 	new cocktailCore.domElement.js.BodyDOMElement().addChild(htmlPageData.containerDOMElement);
 	utest.Assert.notEquals(htmlPageData,null,null,{ fileName : "Main.hx", lineNumber : 90, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](htmlPageData.getById("testID"),cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 92, className : "Main", methodName : "testHTMLParser"});
+	return;
 	var childData;
 	var domElementDivMain;
 	var domElement;
 	var str;
 	childData = htmlPageData.containerDOMElement.getChildren()[0];
 	domElementDivMain = childData.child;
-	utest.Assert["is"](domElementDivMain,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 103, className : "Main", methodName : "testHTMLParser"});
-	utest.Assert.equals(domElementDivMain.getChildren().length,5,null,{ fileName : "Main.hx", lineNumber : 104, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElementDivMain,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 106, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(domElementDivMain.getChildren().length,5,null,{ fileName : "Main.hx", lineNumber : 107, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[0];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 110, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 113, className : "Main", methodName : "testHTMLParser"});
 	childData = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -7232,7 +7234,7 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getChildren()[0];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 114, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 117, className : "Main", methodName : "testHTMLParser"});
 	str = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -7241,10 +7243,10 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getText();
 	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,"Test of an HTML page",null,{ fileName : "Main.hx", lineNumber : 116, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(str,"Test of an HTML page",null,{ fileName : "Main.hx", lineNumber : 119, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[1];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 121, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 124, className : "Main", methodName : "testHTMLParser"});
 	str = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -7253,20 +7255,20 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getText();
 	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,"\n\t\t\t\t\tSome random text with an image here ",null,{ fileName : "Main.hx", lineNumber : 123, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(str,"\n\t\t\t\t\tSome random text with an image here ",null,{ fileName : "Main.hx", lineNumber : 126, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[2];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.domElement.js.ImageDOMElement,null,{ fileName : "Main.hx", lineNumber : 128, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.domElement.js.ImageDOMElement,null,{ fileName : "Main.hx", lineNumber : 131, className : "Main", methodName : "testHTMLParser"});
 	utest.Assert.equals(((function($this) {
 		var $r;
 		var $t = domElement;
 		if(Std["is"]($t,cocktailCore.domElement.js.ImageDOMElement)) $t; else throw "Class cast error";
 		$r = $t;
 		return $r;
-	}(this))).getSrc(),"./test.png",null,{ fileName : "Main.hx", lineNumber : 129, className : "Main", methodName : "testHTMLParser"});
+	}(this))).getSrc(),"./test.png",null,{ fileName : "Main.hx", lineNumber : 132, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[3];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 134, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 137, className : "Main", methodName : "testHTMLParser"});
 	str = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -7275,17 +7277,17 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getText();
 	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,". And a dot at the end.\n\t\t\t\t\t",null,{ fileName : "Main.hx", lineNumber : 136, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(str,". And a dot at the end.\n\t\t\t\t\t",null,{ fileName : "Main.hx", lineNumber : 139, className : "Main", methodName : "testHTMLParser"});
 	childData = domElementDivMain.getChildren()[4];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 141, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.domElement.js.ContainerDOMElement,null,{ fileName : "Main.hx", lineNumber : 144, className : "Main", methodName : "testHTMLParser"});
 	utest.Assert.equals(((function($this) {
 		var $r;
 		var $t = domElement;
 		if(Std["is"]($t,cocktailCore.domElement.js.ContainerDOMElement)) $t; else throw "Class cast error";
 		$r = $t;
 		return $r;
-	}(this))).getSemantic(),"p",null,{ fileName : "Main.hx", lineNumber : 142, className : "Main", methodName : "testHTMLParser"});
+	}(this))).getSemantic(),"p",null,{ fileName : "Main.hx", lineNumber : 145, className : "Main", methodName : "testHTMLParser"});
 	childData = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -7294,7 +7296,7 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getChildren()[0];
 	domElement = childData.child;
-	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 146, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert["is"](domElement,cocktailCore.textElement.js.TextElement,null,{ fileName : "Main.hx", lineNumber : 149, className : "Main", methodName : "testHTMLParser"});
 	str = ((function($this) {
 		var $r;
 		var $t = domElement;
@@ -7303,8 +7305,8 @@ Main.prototype.testHTMLParser = function() {
 		return $r;
 	}(this))).getText();
 	if(str.nodeValue != null) str = str.nodeValue;
-	utest.Assert.equals(str,"\n\t\t\t\t\t\tand here is a paragraph\n\t\t\t\t\t",null,{ fileName : "Main.hx", lineNumber : 148, className : "Main", methodName : "testHTMLParser"});
-	haxe.Log.trace("testHTMLParser END",{ fileName : "Main.hx", lineNumber : 150, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(str,"\n\t\t\t\t\t\tand here is a paragraph\n\t\t\t\t\t",null,{ fileName : "Main.hx", lineNumber : 151, className : "Main", methodName : "testHTMLParser"});
+	haxe.Log.trace("testHTMLParser END",{ fileName : "Main.hx", lineNumber : 153, className : "Main", methodName : "testHTMLParser"});
 }
 Main.prototype.__class__ = Main;
 haxe.Log = function() { }

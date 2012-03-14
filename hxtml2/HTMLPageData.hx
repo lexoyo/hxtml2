@@ -34,7 +34,7 @@ class HTMLPageData
 	/**
 	 * hash table used to store IDs of the dome lements
 	 */
-	private var _ids : Hash<String>;
+	private var _ids : Hash<DOMElement>;
 	/**
 	 * The css parser used to set styles on an element (inline styles)
 	 */
@@ -54,14 +54,14 @@ class HTMLPageData
 	/**
 	 * register a DOMElement with its ID
 	 */
-	public function registerId(id:String, element:Dynamic) 
+	public function registerId(id:String, element:DOMElement) 
 	{
 		_ids.set(id, element);
 	}
 	/**
 	 * get a DOMElement by its ID
 	 */
-	public function getById(id):String
+	public function getById(id):DOMElement
 	{
 		return _ids.get(id);
 	}
