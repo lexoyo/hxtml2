@@ -1,5 +1,6 @@
 package;
 
+/*
 //import cocktail.domElement.GraphicDOMElement;
 import cocktail.domElement.ContainerDOMElement;
 import cocktail.domElement.ImageDOMElement;
@@ -13,6 +14,10 @@ import cocktail.nativeElement.NativeElementData;
 import cocktail.nativeElement.NativeElementManager;
 import cocktail.style.StyleData;
 import cocktail.unit.UnitData;
+*/
+
+import js.Dom;
+import js.Lib;
 
 import utest.Assert;
 import utest.Runner;
@@ -59,7 +64,7 @@ class Main
 				</div>
 			</body>
 		</html>";
-/**/
+/*
 		var htmlData:String = "<html>
 			<head>
 			</head>
@@ -69,6 +74,21 @@ class Main
 				</div>
 			</body>
 		</html>";
+/**/		
+		var htmlData:String = "
+				<div id='main' style='display:block; margin:1px 2px 3px 4px; '>
+					<H1 style='display:block; font-family:serif; font-size:4em; margin-left: 15px' >Test of an HTML page</H1><p>Some random text with an image here </p><img src='./test.png' /><p>. And a dot at the end.</p><p>and here is a paragraph	</p>
+				</div>";
+/*		
+		var htmlData:String = "
+				<div id='main'>
+					<H1>Test of an HTML page</H1><p>Some random text with an image here </p><img src='./test.png' /><p>. And a dot at the end.</p><p>and here is a paragraph	</p>
+				</div>";
+/*		
+//		var htmlData:String = "Test of an HTML page";
+		var htmlData:String = "<div>Test of an HTML page</div>";
+//		var htmlData:String = "<div><div>Test of an HTML page</div></div>";
+
 /**/		
 		
 		var xml:Xml = Xml.parse(htmlData);
@@ -85,16 +105,21 @@ class Main
 			trace("Error, parsing XML tag "+xml.firstElement()+"\n"+Std.string(unknown));
 		}
 */			htmlPageData = (new HTMLParser()).parse(xml.firstElement());
-		(new BodyDOMElement()).addChild(htmlPageData.containerDOMElement);
+//		(new BodyDOMElement()).addChild(htmlPageData.containerDOMElement);
 		
 		Assert.notEquals(htmlPageData, null);
+
+//		Lib.document.appendChild(htmlPageData.htmlDom);
+//		htmlPageData.htmlDom.appendChild(Lib.document.createTextNode("text xxxxxxxxxxxxxxxxxxxxxxxxxxxx"));
+		Lib.document.body.appendChild(htmlPageData.htmlDom);
+//		Lib.document.body.appendChild(Lib.document.createTextNode("text xxxxxxxxxxxxxxxxxxxxxxxxxxxx"));
 		
-		Assert.is(htmlPageData.getById("testID"), ContainerDOMElement);
+//		Assert.is(HtmlDom, htmlPageData.getById("testID"));
 
 //		var testImage:ImageDOMElement = cast(htmlPageData.getById("imageID"), ImageDOMElement);
 //		testImage.onMouseUp = function(event){trace("xxxxxxxxxxxxxxxxxxxxxxxxxxxx"); testImage.x += 100;};
-return;
-		
+
+/*		
 		var childData:ContainerDOMElementChildData;
 		var domElementDivMain:ContainerDOMElement;
 		var domElement:DOMElement;
@@ -149,7 +174,7 @@ return;
 		Assert.is(domElement, TextElement);
 		str = cast(domElement, TextElement).text; if (str.nodeValue != null) str = str.nodeValue;
 		Assert.equals(str, "\n\t\t\t\t\t\tand here is a paragraph\n\t\t\t\t\t");
-
+*/
 		trace("testHTMLParser END");
 	}
 }

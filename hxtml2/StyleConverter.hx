@@ -1,10 +1,13 @@
 package hxtml2;
 
 import hxtml2.CSSParser;
+import js.Dom;
 
+/*
 import cocktailCore.style.Style;
 import cocktail.unit.UnitData;
 import cocktail.style.StyleData;
+*/
 
 typedef ValueWithUnit = {var value : Float; var unit : String;}
 
@@ -66,6 +69,7 @@ class StyleConverter
 				null;
 		}
 	}
+/*
 	public static function valueToFontFamilyStyle(v:Value):Null<FontFamilyStyleValue>
 	{
 		var stringValue:Null<String> = valueToString(v);
@@ -196,9 +200,6 @@ class StyleConverter
 				throw "unknown color \""+value+"\"";
 		}
 	}
-	/**
-	 * CSS : font-size
-	 */
 	public static function getCSSFontSize(value:Value):Null<FontSizeStyleValue>
 	{
 		trace ("getCSSFontSize "+value);
@@ -253,6 +254,7 @@ class StyleConverter
 			return null;
 		}
 	}
+*/
 	public static function applyStyle( styleName : String, v : Value, s : Style ) : Bool 
 	{
 		trace("applyStyle "+styleName+", "+v+", "+s);
@@ -299,40 +301,33 @@ class StyleConverter
 				var valueWithUnit:ValueWithUnit = valueToValueWithUnit(v);
 				if( valueWithUnit != null ) 
 				{
-					s.marginLeft = getMarginStyleValue(valueWithUnit.unit, Math.round(valueWithUnit.value));
+					s.marginLeft = Std.string(Math.round(valueWithUnit.value)) + valueWithUnit.unit;
 					return true;
 				}
 			case "margin-top":
 				var valueWithUnit:ValueWithUnit = valueToValueWithUnit(v);
 				if( valueWithUnit != null ) 
 				{
-					s.marginTop = getMarginStyleValue(valueWithUnit.unit, Math.round(valueWithUnit.value));
+					s.marginTop = Std.string(Math.round(valueWithUnit.value)) + valueWithUnit.unit;
 					return true;
 				}
 			case "margin-right":
 				var valueWithUnit:ValueWithUnit = valueToValueWithUnit(v);
 				if( valueWithUnit != null ) 
 				{
-					s.marginRight = getMarginStyleValue(valueWithUnit.unit, Math.round(valueWithUnit.value));
+					s.marginRight = Std.string(Math.round(valueWithUnit.value)) + valueWithUnit.unit;
 					return true;
 				}
 			case "margin-bottom":
 				var valueWithUnit:ValueWithUnit = valueToValueWithUnit(v);
 				if( valueWithUnit != null ) 
 				{
-					s.marginBottom = getMarginStyleValue(valueWithUnit.unit, Math.round(valueWithUnit.value));
+					s.marginBottom = Std.string(Math.round(valueWithUnit.value)) + valueWithUnit.unit;
 					return true;
 				}
 			case "display":
-				switch( valueToString(v) ) 
-				{
-					case "none": s.display = DisplayStyleValue.none; 
-					case "inline": s.display = inlineStyle; 
-					case "block": s.display = block; 
-					case "inline-block": s.display = inlineBlock; 
-					default:
-						throw("unknown display style \""+v+"\"");
-				}
+				trace("display "+valueToString(v));
+				s.display = valueToString(v);
 				return true;
 			case "padding":
 				var values:Array<Value> = valueToUnitArray(v);
@@ -370,42 +365,42 @@ class StyleConverter
 				var valueWithUnit:ValueWithUnit = valueToValueWithUnit(v);
 				if( valueWithUnit != null ) 
 				{
-					s.paddingLeft = getPaddingStyleValue(valueWithUnit.unit, Math.round(valueWithUnit.value));
+					s.paddingLeft = Std.string(Math.round(valueWithUnit.value)) + valueWithUnit.unit;
 					return true;
 				}
 			case "padding-right":
 				var valueWithUnit:ValueWithUnit = valueToValueWithUnit(v);
 				if( valueWithUnit != null ) 
 				{
-					s.paddingRight = getPaddingStyleValue(valueWithUnit.unit, Math.round(valueWithUnit.value));
+					s.paddingRight = Std.string(Math.round(valueWithUnit.value)) + valueWithUnit.unit;
 					return true;
 				}
 			case "padding-bottom":
 				var valueWithUnit:ValueWithUnit = valueToValueWithUnit(v);
 				if( valueWithUnit != null ) 
 				{
-					s.paddingBottom = getPaddingStyleValue(valueWithUnit.unit, Math.round(valueWithUnit.value));
+					s.paddingBottom = Std.string(Math.round(valueWithUnit.value)) + valueWithUnit.unit;
 					return true;
 				}
 			case "padding-top":
 				var valueWithUnit:ValueWithUnit = valueToValueWithUnit(v);
 				if( valueWithUnit != null ) 
 				{
-					s.paddingTop = getPaddingStyleValue(valueWithUnit.unit, Math.round(valueWithUnit.value));
+					s.paddingTop = Std.string(Math.round(valueWithUnit.value)) + valueWithUnit.unit;
 					return true;
 				}
 			case "width":
 				var valueWithUnit:ValueWithUnit = valueToValueWithUnit(v);
 				if( valueWithUnit != null ) 
 				{
-					s.width = getDimensionStyleValue(valueWithUnit.unit, Math.round(valueWithUnit.value));
+					s.width = Std.string(Math.round(valueWithUnit.value)) + valueWithUnit.unit;
 					return true;
 				}
 			case "height":
 				var valueWithUnit:ValueWithUnit = valueToValueWithUnit(v);
 				if( valueWithUnit != null ) 
 				{
-					s.height = getDimensionStyleValue(valueWithUnit.unit, Math.round(valueWithUnit.value));
+					s.height = Std.string(Math.round(valueWithUnit.value)) + valueWithUnit.unit;
 					return true;
 				}
 			case "background-color":
@@ -495,18 +490,30 @@ class StyleConverter
 					values = new Array();
 					values.push(v);
 				}
-				if( values != null ) 
+				s.fontFamily = "";
+				for (val in values)
 				{
-					s.fontFamily = new Array();
-					for (val in values)
-					{
-						s.fontFamily.push(valueToFontFamilyStyle(val));
-					}
-					
-					return true;
+					if (s.fontFamily != "")
+						s.fontFamily += ",";
+					s.fontFamily += "\"" + val + "\"";
 				}
+				if (s.fontFamily != "")
+					s.fontFamily += ";";
+				return true;
 			case "font-size":
-				s.fontSize = getCSSFontSize(v);
+		// absolute and relative cases
+				// absolute and relative cases
+				var valueString:Null<String> = valueToString(v);
+				if( valueString == null ) 
+				{
+					//  percent and length cases
+					var valueWithUnit:Null<ValueWithUnit> = valueToValueWithUnit(v);
+					if( valueWithUnit != null ) 
+						valueString = Std.string(Math.round(valueWithUnit.value)) + valueWithUnit.unit;
+					else
+						valueString = "";
+				}
+				s.fontSize = valueString;
 				return true;
 				
 /*				var i = getUnit(v);

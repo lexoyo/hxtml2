@@ -1,7 +1,11 @@
 package hxtml2;
 
 import hxtml2.HTMLPageData;
+import js.Dom;
+
+/*
 import cocktail.textElement.TextElement;
+*/
 
 /**
  * This class is in charge of parsing a whole HTML page. It can load CSS and fonts. (And store hxscript/javascript?).
@@ -25,45 +29,43 @@ class HTMLParser
 	/**
 	 * parse all the DOM nodes and create the DOM elements
 	 */
-	public function parse(htmlDOM:Xml):HTMLPageData
+	public function parse(xmlDOM:Xml):HTMLPageData
 	{
 		// init the page data
 		var htmlPageData = new HTMLPageData(_cssParser);
 		// create the DOM
-		_doParse(htmlDOM, htmlPageData);
+		_doParse(xmlDOM, htmlPageData, htmlPageData.htmlDom);
 		return htmlPageData;
 	}
 	/**
 	 * recursively parse all the DOM nodes and create the DOM elements
 	 */
-	private function _doParse(htmlDOM:Xml, htmlPageData:HTMLPageData, parent:Dynamic = null)
+	private function _doParse(xmlDOM:Xml, htmlPageData:HTMLPageData, parent:HtmlDom = null):Void
 	{
-		trace("_doParse " + htmlDOM);
+		trace("_doParse " + xmlDOM);
 
-		var element:Dynamic = null;
+		// variable used to store the return value
+		var element:HtmlDom = null;
 
-		// create element
-		switch( htmlDOM.nodeType ) 
+		// if the element is a node of type Text or CData, create the node and return - no children
+		switch( xmlDOM.nodeType ) 
 		{
 			case Xml.CData:
 				throw "assert";
 			case Xml.PCData, Xml.Comment:
-				trace("added text :"+htmlDOM.nodeValue);
-				element = new TextElement(htmlDOM.nodeValue);
-				if (parent != null)
-					parent.addText(element);
+				trace("added text :"+xmlDOM.nodeValue);
+				element = htmlPageData.createTextNode(xmlDOM.nodeValue, parent);
 				return ;
 		}
 
-		//trace("_doParse " + htmlDOM.nodeName +"("+htmlDOM.nodeType+"), " + htmlPageData +" , "+ parent + ")");
-
+		// type of tag (img, body, div...)
 		var elementType:ElementTypeValue = unknown;
 		try
 		{
-			elementType = Type.createEnum(ElementTypeValue, htmlDOM.nodeName.toLowerCase());
+			elementType = Type.createEnum(ElementTypeValue, xmlDOM.nodeName.toLowerCase());
 		}catch(msg : String)
 		{
-			trace("Error, unknown tag "+htmlDOM.nodeName.toLowerCase()+"\n"+msg);
+			trace("Error, unknown tag "+xmlDOM.nodeName.toLowerCase()+"\n"+msg);
 			elementType = unknown;
 		}
 
@@ -77,16 +79,16 @@ class HTMLParser
 			default:
 				// convert the attributes iterator in a hash table for ease of use
 				var attributesHash:Hash<String> = new Hash();
-				for(attr in htmlDOM.attributes())
+				for(attr in xmlDOM.attributes())
 				{
-//					attributesHash.set(attr, _cssParser.getValueFromString(attr, htmlDOM.get(attr)));
-					attributesHash.set(attr, htmlDOM.get(attr));
+//					attributesHash.set(attr, _cssParser.getValueFromString(attr, xmlDOM.get(attr)));
+					attributesHash.set(attr, xmlDOM.get(attr));
 				}
-				element = htmlPageData.createElement(elementType, attributesHash, parent, htmlDOM.nodeName);
+				element = htmlPageData.createElement(elementType, attributesHash, parent, xmlDOM.nodeName);
 		}
 		// build children
 		var hasText = false;
-		for( child in htmlDOM ) 
+		for( child in xmlDOM ) 
 		{
 			// remove empty texts
 			if(child.nodeType ==Xml.PCData && ~/^[ \n\r\t]*$/.match(child.nodeValue) ) 

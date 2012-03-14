@@ -1,11 +1,12 @@
 package hxtml2;
 
 import hxtml2.StyleConverter;
-
+/*
 import cocktailCore.style.Style;
 import cocktail.unit.UnitData;
 import cocktail.style.StyleData;
-
+*/
+import js.Dom;
 
 enum Token {
 	TIdent( i : String );
