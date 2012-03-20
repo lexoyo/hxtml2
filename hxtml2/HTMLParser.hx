@@ -54,7 +54,10 @@ class HTMLParser
 				throw "assert";
 			case Xml.PCData, Xml.Comment:
 				trace("added text :"+xmlDOM.nodeValue);
+				// create the node
 				element = htmlPageData.createTextNode(xmlDOM.nodeValue, parent);
+				// first node
+				if (parent == null) htmlPageData.htmlDom = element;
 				return ;
 		}
 
@@ -81,10 +84,12 @@ class HTMLParser
 				var attributesHash:Hash<String> = new Hash();
 				for(attr in xmlDOM.attributes())
 				{
-//					attributesHash.set(attr, _cssParser.getValueFromString(attr, xmlDOM.get(attr)));
 					attributesHash.set(attr, xmlDOM.get(attr));
 				}
+				// create the node
 				element = htmlPageData.createElement(elementType, attributesHash, parent, xmlDOM.nodeName);
+				// first node
+				if (parent == null) htmlPageData.htmlDom = element;
 		}
 		// build children
 		var hasText = false;

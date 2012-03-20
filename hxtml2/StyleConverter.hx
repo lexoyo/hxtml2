@@ -494,8 +494,8 @@ class StyleConverter
 				for (val in values)
 				{
 					if (s.fontFamily != "")
-						s.fontFamily += ",";
-					s.fontFamily += "\"" + val + "\"";
+						s.fontFamily += ", ";
+					s.fontFamily += valueToString(val);
 				}
 				if (s.fontFamily != "")
 					s.fontFamily += ";";

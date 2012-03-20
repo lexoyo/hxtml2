@@ -54,7 +54,7 @@ class HTMLPageData
 		// init the ids
 		_ids = new Hash();
 		// init the body dom element
-		htmlDom = Lib.document.createElement("div");
+//		htmlDom = Lib.document.createElement("div");
 	}
 	/**
 	 * register a DOMElement with its ID
@@ -134,13 +134,12 @@ class HTMLPageData
 	public function setAttributes(element:HtmlDom, attributes:Hash<String>)
 	{
 		// get the id
-		var id:String="";
 		if (attributes.exists("id"))
-			id = attributes.get("id");
+			element.id = attributes.get("id");
 		
 		// register the id if needed
-		if (id != "")
-			registerId(id, element);
+		if (element.id != "")
+			registerId(element.id, element);
 	
 		// set styles
 		if (attributes.exists("style"))

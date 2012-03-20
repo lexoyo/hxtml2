@@ -1980,8 +1980,8 @@ hxtml2.StyleConverter.applyStyle = function(styleName,v,s) {
 		while(_g < values.length) {
 			var val = values[_g];
 			++_g;
-			if(s.fontFamily != "") s.fontFamily += ",";
-			s.fontFamily += "\"" + val + "\"";
+			if(s.fontFamily != "") s.fontFamily += ", ";
+			s.fontFamily += hxtml2.StyleConverter.valueToString(val);
 		}
 		if(s.fontFamily != "") s.fontFamily += ";";
 		return true;
@@ -3038,6 +3038,7 @@ hxtml2.HTMLParser.prototype._doParse = function(xmlDOM,htmlPageData,parent) {
 	case Xml.PCData:case Xml.Comment:
 		haxe.Log.trace("added text :" + xmlDOM.getNodeValue(),{ fileName : "HTMLParser.hx", lineNumber : 56, className : "hxtml2.HTMLParser", methodName : "_doParse"});
 		element = htmlPageData.createTextNode(xmlDOM.getNodeValue(),parent);
+		if(parent == null) htmlPageData.htmlDom = element;
 		return;
 	}
 	var elementType = hxtml2.ElementTypeValue.unknown;
@@ -3045,7 +3046,7 @@ hxtml2.HTMLParser.prototype._doParse = function(xmlDOM,htmlPageData,parent) {
 		elementType = Type.createEnum(hxtml2.ElementTypeValue,xmlDOM.getNodeName().toLowerCase());
 	} catch( msg ) {
 		if( js.Boot.__instanceof(msg,String) ) {
-			haxe.Log.trace("Error, unknown tag " + xmlDOM.getNodeName().toLowerCase() + "\n" + msg,{ fileName : "HTMLParser.hx", lineNumber : 68, className : "hxtml2.HTMLParser", methodName : "_doParse"});
+			haxe.Log.trace("Error, unknown tag " + xmlDOM.getNodeName().toLowerCase() + "\n" + msg,{ fileName : "HTMLParser.hx", lineNumber : 71, className : "hxtml2.HTMLParser", methodName : "_doParse"});
 			elementType = hxtml2.ElementTypeValue.unknown;
 		} else throw(msg);
 	}
@@ -3067,6 +3068,7 @@ hxtml2.HTMLParser.prototype._doParse = function(xmlDOM,htmlPageData,parent) {
 			attributesHash.set(attr,xmlDOM.get(attr));
 		}
 		element = htmlPageData.createElement(elementType,attributesHash,parent,xmlDOM.getNodeName());
+		if(parent == null) htmlPageData.htmlDom = element;
 	}
 	var hasText = false;
 	var $it1 = xmlDOM.iterator();
@@ -4125,7 +4127,6 @@ hxtml2.HTMLPageData = function(cssParser) {
 	if( cssParser === $_ ) return;
 	this._cssParser = cssParser;
 	this._ids = new Hash();
-	this.htmlDom = js.Lib.document.createElement("div");
 }
 hxtml2.HTMLPageData.__name__ = ["hxtml2","HTMLPageData"];
 hxtml2.HTMLPageData.prototype.htmlDom = null;
@@ -4162,9 +4163,8 @@ hxtml2.HTMLPageData.prototype.createElement = function(elementType,attributes,pa
 	return element;
 }
 hxtml2.HTMLPageData.prototype.setAttributes = function(element,attributes) {
-	var id = "";
-	if(attributes.exists("id")) id = attributes.get("id");
-	if(id != "") this.registerId(id,element);
+	if(attributes.exists("id")) element.id = attributes.get("id");
+	if(element.id != "") this.registerId(element.id,element);
 	if(attributes.exists("style")) {
 		var styles = attributes.get("style");
 		this._cssParser.setStyleFromString(element.style,styles);
@@ -4583,14 +4583,17 @@ Main.main = function() {
 }
 Main.prototype.testHTMLParser = function() {
 	haxe.Log.trace("testHTMLParser START",{ fileName : "Main.hx", lineNumber : 52, className : "Main", methodName : "testHTMLParser"});
-	var htmlData = "\n\t\t\t\t<div id='main' style='display:block; margin:1px 2px 3px 4px; '>\n\t\t\t\t\t<H1 style='display:block; font-family:serif; font-size:4em; margin-left: 15px' >Test of an HTML page</H1><p>Some random text with an image here </p><img src='./test.png' /><p>. And a dot at the end.</p><p>and here is a paragraph\t</p>\n\t\t\t\t</div>";
+	var htmlData = "\n\t\t\t\t<div id='main' style='display:block; margin:1px 2px 3px 4px; '>\n\t\t\t\t\t<H1 style='display:block; font-family:serif, arial; font-size:4em; margin-left: 15px' >Test of an HTML page</H1><p>Some random text with an image here </p><img src='./test.png' /><p>. And a dot at the end.</p><p>and here is a paragraph\t</p>\n\t\t\t\t</div>";
 	var xml = Xml.parse(htmlData);
-	haxe.Log.trace(xml,{ fileName : "Main.hx", lineNumber : 95, className : "Main", methodName : "testHTMLParser"});
+	haxe.Log.trace(xml,{ fileName : "Main.hx", lineNumber : 96, className : "Main", methodName : "testHTMLParser"});
 	var htmlPageData = null;
 	htmlPageData = new hxtml2.HTMLParser().parse(xml.firstElement());
-	utest.Assert.notEquals(htmlPageData,null,null,{ fileName : "Main.hx", lineNumber : 110, className : "Main", methodName : "testHTMLParser"});
-	js.Lib.document.body.appendChild(htmlPageData.htmlDom);
-	haxe.Log.trace("testHTMLParser END",{ fileName : "Main.hx", lineNumber : 178, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.notEquals(htmlPageData,null,null,{ fileName : "Main.hx", lineNumber : 112, className : "Main", methodName : "testHTMLParser"});
+	js.Lib.document.getElementById("mainContainer").appendChild(htmlPageData.htmlDom);
+	haxe.Log.trace(js.Lib.document.getElementById("mainContainer").innerHTML,{ fileName : "Main.hx", lineNumber : 117, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.equals(htmlData,js.Lib.document.getElementById("mainContainer").innerHTML,null,{ fileName : "Main.hx", lineNumber : 118, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.isTrue(Reflect.hasField(htmlPageData.getById("testID"),"title"),null,{ fileName : "Main.hx", lineNumber : 121, className : "Main", methodName : "testHTMLParser"});
+	haxe.Log.trace("testHTMLParser END",{ fileName : "Main.hx", lineNumber : 185, className : "Main", methodName : "testHTMLParser"});
 }
 Main.prototype.__class__ = Main;
 $_ = {}

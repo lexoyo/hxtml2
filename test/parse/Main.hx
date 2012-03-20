@@ -74,11 +74,12 @@ class Main
 				</div>
 			</body>
 		</html>";
-/**/		
+/**/
 		var htmlData:String = "
 				<div id='main' style='display:block; margin:1px 2px 3px 4px; '>
-					<H1 style='display:block; font-family:serif; font-size:4em; margin-left: 15px' >Test of an HTML page</H1><p>Some random text with an image here </p><img src='./test.png' /><p>. And a dot at the end.</p><p>and here is a paragraph	</p>
+					<H1 style='display:block; font-family:serif, arial; font-size:4em; margin-left: 15px' >Test of an HTML page</H1><p>Some random text with an image here </p><img src='./test.png' /><p>. And a dot at the end.</p><p>and here is a paragraph	</p>
 				</div>";
+				
 /*		
 		var htmlData:String = "
 				<div id='main'>
@@ -104,17 +105,23 @@ class Main
 		} catch( unknown : Dynamic ) {
 			trace("Error, parsing XML tag "+xml.firstElement()+"\n"+Std.string(unknown));
 		}
-*/			htmlPageData = (new HTMLParser()).parse(xml.firstElement());
-//		(new BodyDOMElement()).addChild(htmlPageData.containerDOMElement);
-		
+*/
+		htmlPageData = (new HTMLParser()).parse(xml.firstElement());
+
+		// check if we have a result
 		Assert.notEquals(htmlPageData, null);
 
-//		Lib.document.appendChild(htmlPageData.htmlDom);
-//		htmlPageData.htmlDom.appendChild(Lib.document.createTextNode("text xxxxxxxxxxxxxxxxxxxxxxxxxxxx"));
-		Lib.document.body.appendChild(htmlPageData.htmlDom);
-//		Lib.document.body.appendChild(Lib.document.createTextNode("text xxxxxxxxxxxxxxxxxxxxxxxxxxxx"));
+		// only if the **HTML do NOT contain a body tag**
+		// add to the HTML body
+ 		Lib.document.getElementById("mainContainer").appendChild(htmlPageData.htmlDom);
+		trace (Lib.document.getElementById("mainContainer").innerHTML);
+		Assert.equals(htmlData, Lib.document.getElementById("mainContainer").innerHTML);
 		
-//		Assert.is(HtmlDom, htmlPageData.getById("testID"));
+		// check if the getById returns a js.HtmlDom object - which should have a title field
+		Assert.isTrue(Reflect.hasField(htmlPageData.getById("testID"), "title"));
+		// do not work since HtmlDom is a typedef in JS
+		// Assert.is(HtmlDom, htmlPageData.getById("testID"));
+
 
 //		var testImage:ImageDOMElement = cast(htmlPageData.getById("imageID"), ImageDOMElement);
 //		testImage.onMouseUp = function(event){trace("xxxxxxxxxxxxxxxxxxxxxxxxxxxx"); testImage.x += 100;};
