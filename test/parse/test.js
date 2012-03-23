@@ -198,232 +198,6 @@ hxtml2.CSSParser.prototype.setStyleFromString = function(style,css) {
 	haxe.Log.trace("setStyleFromString " + style + " -  " + Type["typeof"](style),{ fileName : "CSSParser.hx", lineNumber : 93, className : "hxtml2.CSSParser", methodName : "setStyleFromString"});
 	this.parse(css,style);
 }
-hxtml2.CSSParser.prototype.getGroup = function(v,f) {
-	var $e = (v);
-	switch( $e[1] ) {
-	case 7:
-		var l = $e[2];
-		var a = [];
-		var _g = 0;
-		while(_g < l.length) {
-			var v1 = l[_g];
-			++_g;
-			var v2 = f(v1);
-			if(v2 == null) return null;
-			a.push(v2);
-		}
-		return a;
-	default:
-		var v1 = f(v);
-		return v1 == null?null:[v1];
-	}
-}
-hxtml2.CSSParser.prototype.getList = function(v,f) {
-	var $e = (v);
-	switch( $e[1] ) {
-	case 6:
-		var l = $e[2];
-		var a = [];
-		var _g = 0;
-		while(_g < l.length) {
-			var v1 = l[_g];
-			++_g;
-			var v2 = f(v1);
-			if(v2 == null) return null;
-			a.push(v2);
-		}
-		return a;
-	default:
-		var v1 = f(v);
-		return v1 == null?null:[v1];
-	}
-}
-hxtml2.CSSParser.prototype.getPix = function(v) {
-	return (function($this) {
-		var $r;
-		var $e = (v);
-		switch( $e[1] ) {
-		case 2:
-			var u = $e[3], f = $e[2];
-			$r = (function($this) {
-				var $r;
-				switch(u) {
-				case "px":
-					$r = Std["int"](f);
-					break;
-				case "pt":
-					$r = Std["int"](f * 4 / 3);
-					break;
-				default:
-					$r = null;
-				}
-				return $r;
-			}($this));
-			break;
-		case 4:
-			var v1 = $e[2];
-			$r = v1;
-			break;
-		default:
-			$r = null;
-		}
-		return $r;
-	}(this));
-}
-hxtml2.CSSParser.prototype.getUnit = function(v) {
-	return (function($this) {
-		var $r;
-		var $e = (v);
-		switch( $e[1] ) {
-		case 2:
-			var u = $e[3], f = $e[2];
-			$r = (function($this) {
-				var $r;
-				switch(u) {
-				case "px":
-					$r = hxtml2.Unit.Pix(Std["int"](f));
-					break;
-				case "pt":
-					$r = hxtml2.Unit.Pix(Std["int"](f * 4 / 3));
-					break;
-				case "em":
-					$r = hxtml2.Unit.EM(f);
-					break;
-				case "%":
-					$r = hxtml2.Unit.Percent(f / 100);
-					break;
-				default:
-					$r = null;
-				}
-				return $r;
-			}($this));
-			break;
-		case 4:
-			var v1 = $e[2];
-			$r = hxtml2.Unit.Pix(v1);
-			break;
-		default:
-			$r = null;
-		}
-		return $r;
-	}(this));
-}
-hxtml2.CSSParser.prototype.getIdent = function(v) {
-	return (function($this) {
-		var $r;
-		var $e = (v);
-		switch( $e[1] ) {
-		case 0:
-			var v1 = $e[2];
-			$r = v1;
-			break;
-		default:
-			$r = null;
-		}
-		return $r;
-	}(this));
-}
-hxtml2.CSSParser.prototype.getCol = function(v) {
-	return (function($this) {
-		var $r;
-		var $e = (v);
-		switch( $e[1] ) {
-		case 5:
-			var v1 = $e[2];
-			$r = v1.length == 6?Std.parseInt("0x" + v1):v1.length == 3?Std.parseInt("0x" + v1.charAt(0) + v1.charAt(0) + v1.charAt(1) + v1.charAt(1) + v1.charAt(2) + v1.charAt(2)):null;
-			break;
-		case 0:
-			var i = $e[2];
-			$r = (function($this) {
-				var $r;
-				switch(i) {
-				case "black":
-					$r = 0;
-					break;
-				case "red":
-					$r = 16711680;
-					break;
-				case "lime":
-					$r = 65280;
-					break;
-				case "blue":
-					$r = 255;
-					break;
-				case "white":
-					$r = 16777215;
-					break;
-				case "aqua":
-					$r = 65535;
-					break;
-				case "fuchsia":
-					$r = 16711935;
-					break;
-				case "yellow":
-					$r = 16776960;
-					break;
-				case "maroon":
-					$r = 8388608;
-					break;
-				case "green":
-					$r = 32768;
-					break;
-				case "navy":
-					$r = 128;
-					break;
-				case "olive":
-					$r = 8421376;
-					break;
-				case "purple":
-					$r = 8388736;
-					break;
-				case "teal":
-					$r = 32896;
-					break;
-				case "silver":
-					$r = 12632256;
-					break;
-				case "gray":case "grey":
-					$r = 8421504;
-					break;
-				default:
-					$r = null;
-				}
-				return $r;
-			}($this));
-			break;
-		default:
-			$r = null;
-		}
-		return $r;
-	}(this));
-}
-hxtml2.CSSParser.prototype.getFontName = function(v) {
-	return (function($this) {
-		var $r;
-		var $e = (v);
-		switch( $e[1] ) {
-		case 1:
-			var s = $e[2];
-			$r = s;
-			break;
-		case 7:
-			$r = (function($this) {
-				var $r;
-				var g = $this.getGroup(v,$closure($this,"getIdent"));
-				$r = g == null?null:g.join(" ");
-				return $r;
-			}($this));
-			break;
-		case 0:
-			var i = $e[2];
-			$r = i;
-			break;
-		default:
-			$r = null;
-		}
-		return $r;
-	}(this));
-}
 hxtml2.CSSParser.prototype.unexpected = function(t) {
 	throw "Unexpected " + Std.string(t);
 	return null;
@@ -1946,13 +1720,35 @@ hxtml2.StyleConverter.applyStyle = function(styleName,v,s) {
 		}
 		break;
 	case "background-color":
-		throw "not implemented";
+		var c = hxtml2.StyleConverter.getCol(v);
+		if(c != null) {
+			s.backgroundColor = c;
+			return true;
+		}
+		if(hxtml2.StyleConverter.getIdent(v) == "transparent") {
+			s.backgroundColor = "transparent";
+			return true;
+		}
 		break;
 	case "background-repeat":
-		throw "not implemented";
+		s.backgroundRepeat = hxtml2.StyleConverter.getIdent(v);
 		break;
 	case "background-image":
-		throw "not implemented";
+		var $e = (v);
+		switch( $e[1] ) {
+		case 8:
+			var url = $e[2];
+			s.backgroundImage = url;
+			return true;
+		case 0:
+			var i = $e[2];
+			if(i == "none") {
+				s.backgroundImage = "";
+				return true;
+			}
+			break;
+		default:
+		}
 		break;
 	case "background-attachment":
 		throw "not implemented";
@@ -1967,23 +1763,18 @@ hxtml2.StyleConverter.applyStyle = function(styleName,v,s) {
 		throw "not implemented";
 		break;
 	case "background":
-		throw "not implemented";
-		break;
+		return hxtml2.StyleConverter.applyComposite(["background-color","background-image","background-repeat","background-attachment","background-position"],v,s);
 	case "font-family":
 		var values = hxtml2.StyleConverter.valueToUnitArray(v);
-		if(values == null) {
-			values = new Array();
-			values.push(v);
-		}
-		s.fontFamily = "";
+		if(values == null) values = [v];
+		var fonts = [];
 		var _g = 0;
 		while(_g < values.length) {
 			var val = values[_g];
 			++_g;
-			if(s.fontFamily != "") s.fontFamily += ", ";
-			s.fontFamily += hxtml2.StyleConverter.valueToString(val);
+			fonts.push(hxtml2.StyleConverter.valueToString(val));
 		}
-		if(s.fontFamily != "") s.fontFamily += ";";
+		s.fontFamily = fonts;
 		return true;
 	case "font-size":
 		var valueString = hxtml2.StyleConverter.valueToString(v);
@@ -1993,10 +1784,196 @@ hxtml2.StyleConverter.applyStyle = function(styleName,v,s) {
 		}
 		s.fontSize = valueString;
 		return true;
+	case "font-style":
+		s.fontStyle = hxtml2.StyleConverter.getIdent(v);
+		return true;
+	case "font-variant":
+		s.fontStyle = hxtml2.StyleConverter.getIdent(v);
+		return true;
+	case "font-weight":
+		s.fontStyle = hxtml2.StyleConverter.getIdent(v);
+		return true;
+	case "font":
+		var vl = (function($this) {
+			var $r;
+			var $e = (v);
+			switch( $e[1] ) {
+			case 7:
+				var l = $e[2];
+				$r = l;
+				break;
+			default:
+				$r = [v];
+			}
+			return $r;
+		}(this));
+		var v1 = hxtml2.Value.VGroup(vl);
+		hxtml2.StyleConverter.applyComposite(["font-style","font-variant","font-weight"],v1,s);
+		hxtml2.StyleConverter.applyComposite(["font-size"],v1,s);
+		if(vl.length > 0) {
+			switch( (vl[0])[1] ) {
+			case 10:
+				vl.shift();
+				break;
+			default:
+			}
+		}
+		hxtml2.StyleConverter.applyComposite(["line-height"],v1,s);
+		hxtml2.StyleConverter.applyComposite(["font-family"],v1,s);
+		if(vl.length == 0) return true;
+		break;
+	case "color":
+		var c = hxtml2.StyleConverter.getCol(v);
+		if(c != null) {
+			s.color = c;
+			return true;
+		}
+		break;
 	default:
 		throw "Not implemented '" + styleName + "' = " + Std.string(v);
 	}
 	return false;
+}
+hxtml2.StyleConverter.applyComposite = function(names,v,s) {
+	var vl = (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 7:
+			var l = $e[2];
+			$r = l;
+			break;
+		default:
+			$r = [v];
+		}
+		return $r;
+	}(this));
+	while(vl.length > 0) {
+		var found = false;
+		var _g = 0;
+		while(_g < names.length) {
+			var n = names[_g];
+			++_g;
+			var count = (function($this) {
+				var $r;
+				switch(n) {
+				case "background-position":
+					$r = 2;
+					break;
+				default:
+					$r = 1;
+				}
+				return $r;
+			}(this));
+			if(count > vl.length) count = vl.length;
+			while(count > 0) {
+				var v1 = count == 1?vl[0]:hxtml2.Value.VGroup(vl.slice(0,count));
+				if(hxtml2.StyleConverter.applyStyle(n,v1,s)) {
+					found = true;
+					names.remove(n);
+					var _g1 = 0;
+					while(_g1 < count) {
+						var i = _g1++;
+						vl.shift();
+					}
+					break;
+				}
+				count--;
+			}
+			if(found) break;
+		}
+		if(!found) return false;
+	}
+	return true;
+}
+hxtml2.StyleConverter.getIdent = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 0:
+			var v1 = $e[2];
+			$r = v1;
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
+}
+hxtml2.StyleConverter.getCol = function(v) {
+	return (function($this) {
+		var $r;
+		var $e = (v);
+		switch( $e[1] ) {
+		case 5:
+			var v1 = $e[2];
+			$r = v1.length == 6?Std.parseInt("0x" + v1):v1.length == 3?Std.parseInt("0x" + v1.charAt(0) + v1.charAt(0) + v1.charAt(1) + v1.charAt(1) + v1.charAt(2) + v1.charAt(2)):null;
+			break;
+		case 0:
+			var i = $e[2];
+			$r = (function($this) {
+				var $r;
+				switch(i) {
+				case "black":
+					$r = 0;
+					break;
+				case "red":
+					$r = 16711680;
+					break;
+				case "lime":
+					$r = 65280;
+					break;
+				case "blue":
+					$r = 255;
+					break;
+				case "white":
+					$r = 16777215;
+					break;
+				case "aqua":
+					$r = 65535;
+					break;
+				case "fuchsia":
+					$r = 16711935;
+					break;
+				case "yellow":
+					$r = 16776960;
+					break;
+				case "maroon":
+					$r = 8388608;
+					break;
+				case "green":
+					$r = 32768;
+					break;
+				case "navy":
+					$r = 128;
+					break;
+				case "olive":
+					$r = 8421376;
+					break;
+				case "purple":
+					$r = 8388736;
+					break;
+				case "teal":
+					$r = 32896;
+					break;
+				case "silver":
+					$r = 12632256;
+					break;
+				case "gray":case "grey":
+					$r = 8421504;
+					break;
+				default:
+					$r = null;
+				}
+				return $r;
+			}($this));
+			break;
+		default:
+			$r = null;
+		}
+		return $r;
+	}(this));
 }
 hxtml2.StyleConverter.prototype.__class__ = hxtml2.StyleConverter;
 haxe.Log = function() { }
@@ -4583,17 +4560,18 @@ Main.main = function() {
 }
 Main.prototype.testHTMLParser = function() {
 	haxe.Log.trace("testHTMLParser START",{ fileName : "Main.hx", lineNumber : 52, className : "Main", methodName : "testHTMLParser"});
-	var htmlData = "\n\t\t\t\t<div id='main' style='display:block; margin:1px 2px 3px 4px; '>\n\t\t\t\t\t<H1 style='display:block; font-family:serif, arial; font-size:4em; margin-left: 15px' >Test of an HTML page</H1><p>Some random text with an image here </p><img src='./test.png' /><p>. And a dot at the end.</p><p>and here is a paragraph\t</p>\n\t\t\t\t</div>";
+	var htmlData = "\n\t\t\t\t<div id='main' style='display:block; margin:1px 2px 3px 4px; '>\n\t\t\t\t\t<H1 style='display:block; font-family:serif, arial; font-size:4em; margin-left: 15px' >Test of an HTML page</H1><p style='font-size:16pt; '>Some random text with an image here </p><img src='./test.png' /><p>. And a dot at the end.</p><p>and here is a paragraph\t</p>\n\t\t\t\t</div>";
 	var xml = Xml.parse(htmlData);
 	haxe.Log.trace(xml,{ fileName : "Main.hx", lineNumber : 96, className : "Main", methodName : "testHTMLParser"});
 	var htmlPageData = null;
 	htmlPageData = new hxtml2.HTMLParser().parse(xml.firstElement());
 	utest.Assert.notEquals(htmlPageData,null,null,{ fileName : "Main.hx", lineNumber : 112, className : "Main", methodName : "testHTMLParser"});
 	js.Lib.document.getElementById("mainContainer").appendChild(htmlPageData.htmlDom);
-	haxe.Log.trace(js.Lib.document.getElementById("mainContainer").innerHTML,{ fileName : "Main.hx", lineNumber : 117, className : "Main", methodName : "testHTMLParser"});
-	utest.Assert.equals(htmlData,js.Lib.document.getElementById("mainContainer").innerHTML,null,{ fileName : "Main.hx", lineNumber : 118, className : "Main", methodName : "testHTMLParser"});
-	utest.Assert.isTrue(Reflect.hasField(htmlPageData.getById("testID"),"title"),null,{ fileName : "Main.hx", lineNumber : 121, className : "Main", methodName : "testHTMLParser"});
-	haxe.Log.trace("testHTMLParser END",{ fileName : "Main.hx", lineNumber : 185, className : "Main", methodName : "testHTMLParser"});
+	if(js.Lib.document.getElementById("mainContainer") == null) throw "There must be a div with id 'mainContainer' in the html page for this test";
+	haxe.Log.trace(js.Lib.document.getElementById("mainContainer").innerHTML,{ fileName : "Main.hx", lineNumber : 120, className : "Main", methodName : "testHTMLParser"});
+	haxe.Log.trace(xml,{ fileName : "Main.hx", lineNumber : 121, className : "Main", methodName : "testHTMLParser"});
+	utest.Assert.isTrue(Reflect.hasField(htmlPageData.getById("testID"),"title"),null,{ fileName : "Main.hx", lineNumber : 124, className : "Main", methodName : "testHTMLParser"});
+	haxe.Log.trace("testHTMLParser END",{ fileName : "Main.hx", lineNumber : 188, className : "Main", methodName : "testHTMLParser"});
 }
 Main.prototype.__class__ = Main;
 $_ = {}
