@@ -1,6 +1,0 @@
--main Main
--cp ../../libs/
--cp ../../
--lib utest
--swf9 test.swf
--swf-version 10.1
