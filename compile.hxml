@@ -6,3 +6,23 @@
 -cp test/flash
 
 
+
+
+--next
+
+-js test/js/render.js
+-main TestJS
+-cp lib
+-cp test/js
+
+
+--next
+
+-swf9 test/js/render.swf
+-main TestJS
+-swf-version 9
+-swf-header 200:200:30:FFFFFF
+-cp lib
+-cp test/js
+--remap js:cocktail
+-swf-version 10.2

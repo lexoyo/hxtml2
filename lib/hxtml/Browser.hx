@@ -12,11 +12,27 @@ class Browser<DisplayObjectType> {
 	// callbacks provided by the application 
 	// used to manipulate the dom
 	////////////////////////////////////////////////////////
+	/**
+	 * This method is called by the browser class during the parsing of the HTML 
+	 */
 	public var createElement:String->DisplayObjectType;
+	/**
+	 * This method is called by the browser class during the parsing of the HTML 
+	 */
 	public var createTextNode:String->DisplayObjectType;
+	/**
+	 * This method is called by the browser class during the parsing of the HTML 
+	 */
 	public var appendChild:DisplayObjectType->DisplayObjectType->Void;
+	/**
+	 * This method is called by the browser class during the parsing of the HTML 
+	 */
 	public var setAttribute:DisplayObjectType->String->String->Void;
+	/**
+	 * This method is called by the browser class during the parsing of the HTML 
+	 */
 	public var invalidate:Void->Void;
+
 	var styleProxy:IStyleProxy<DisplayObjectType>;
 	
 	public function new(createElement:String->DisplayObjectType, 
