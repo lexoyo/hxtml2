@@ -457,7 +457,7 @@ class UnitManager
 		switch(parsed)
 		{
 			case "auto":
-				cursor = Cursor.auto;
+				cursor = Cursor.cssAuto;
 				
 			case "crosshair":
 				cursor = Cursor.crosshair;
@@ -495,6 +495,67 @@ class UnitManager
 		}
 		
 		return  wordSpacing;
+	}
+	
+	/**
+	 * convert a string into a typed enum
+	 * TODO: ImageValue.imageList and ImageValue.gradient
+	 * @example converts 'url("./abc.gif"),url  (./def.jpg)' into [BackgroundImage.image(ImageValue.url("./abc.gif")),BackgroundImage.image(ImageValue.url("./def.jpg"))] 
+	 */
+	static public function backgroundImageEnum(string:String):Array<BackgroundImage>
+	{
+		if (string == "none") 
+			return [BackgroundImage.none];
+
+		var array:Array<String> = string2VList(string, ",");
+		var arrayBgImg:Array<BackgroundImage> = [];
+		for (val in array)
+		{
+			if (val == "none") 
+				arrayBgImg.push(BackgroundImage.none);
+			else
+				arrayBgImg.push(BackgroundImage.image(ImageValue.url(string2URLData(val))));
+		}
+		return arrayBgImg;
+	}
+	
+	//TODO
+	static public function backgroundRepeatEnum(string:String):Array<BackgroundRepeat>
+	{
+		return [];
+	}
+	
+	//TODO
+	static public function backgroundOriginEnum(string:String):Array<BackgroundOrigin>
+	{
+		return [];
+	}
+	
+	//TODO
+	static public function backgroundSizeEnum(string:String):Array<BackgroundSize>
+	{
+		return [];
+	}
+	
+	//TODO
+	static public function backgroundPositionEnum(string:String):Array<BackgroundPosition>
+	{
+		return [];
+	}
+	
+	//TODO
+	static public function backgroundClipEnum(string:String):Array<BackgroundClip>
+	{
+		return [];
+	}
+	
+	/**
+	 * convert a string into a typed enum
+	 * @example	converts "Times New Roman",Georgia,Serif into ["Times New Roman","Georgia","Serif"]
+	 */
+	static public function fontFamilyEnum(string:String):Array<String>
+	{
+		return string2Array(string);
 	}
 	
 	static public function letterSpacingEnum(string:String):LetterSpacing
@@ -635,6 +696,7 @@ class UnitManager
 	//////////////////////////////////////////////////////////////////////////////////////////
 	/**
 	 * function used internally to convert an rgba value to a 4 digit object of type VCol
+	 * 
 	 */
 	static private function string2RGBA(string:String):VCol
 	{
@@ -701,7 +763,7 @@ class UnitManager
 		return switch (parsed.unit)
 		{
 			case "in":
-				Length._in(Std.parseInt(parsed.value));	
+				Length.cssIn(Std.parseInt(parsed.value));	
 			case "cm":
 				Length.cm(Std.parseInt(parsed.value));	
 			case "em":
@@ -729,6 +791,7 @@ class UnitManager
 	}
 	/**
 	 * function used internally to convert a value/unit strings pair to an enum  
+	 * @example	Assert.equals("http://test.com", UnitManager.string2URLData('url("http://test.com")'));
 	 */
 	static private function string2URLData(string:String):URLData
 	{
@@ -745,6 +808,8 @@ class UnitManager
 	}
 	/**
 	 * function used internally to convert a value/unit strings pair to an enum  
+	 * @example	Assert.same(["1px","2pt", "3px", "4%"], UnitManager.string2VList("1px 2pt 3px 4%"));
+	 * @example	"Times New Roman",Georgia,Serif into ["Times New Roman","Georgia","Serif"]
 	 */
 	static private function string2VList(string:String, sep:String = " "):Array<String>
 	{
@@ -763,6 +828,19 @@ class UnitManager
 		// split
 		var array:Array<String> = string.split(sep);
 		return array;
+	}
+	/**
+	 * @example	converts "Times New Roman", Georgia,Serif into ["Times New Roman","Georgia","Serif"]
+	 */
+	static private function string2Array(string:String):Array<String>
+	{
+		// build an array of values
+		var r : EReg = ~/[ "]*[,"][ "]*/g;
+		// split where elements are separated by , or ", or ," or ","
+		var res = r.split(string);
+		// remove the 1st element which may be empty because of a "
+		if (res[0] == "") res.shift();
+		return res;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -803,7 +881,7 @@ class UnitManager
 			case pt(value):
 				lengthValue = value * 1/0.75;	
 				
-			case _in(value):
+			case cssIn(value):
 				lengthValue = value * (72 * (1/0.75));
 				
 			case pc(value):
@@ -1752,32 +1830,13 @@ class UnitManager
 	/**
 	 * CSS : font-family
 	 */
-	public static function getCSSFontFamily(value:Array<FontFamily>):String
+	public static function getCSSFontFamily(value:Array<String>):String
 	{
 		var cssFontFamilyValue:String = "";
 		
 		for (i in 0...value.length)
 		{
-			var fontName:String;
-			
-			switch (value[i])
-			{
-				case FontFamily.familyName(name):
-					fontName = name;
-				
-				case FontFamily.genericFamily(genericName):
-					switch (genericName)
-					{
-						case GenericFontFamily.serif:
-							fontName = "serif";
-						
-						case GenericFontFamily.sansSerif:
-							fontName = "sans-serif";
-							
-						case GenericFontFamily.monospace:
-							fontName = "monospace";
-					}
-			}
+			var fontName:String = value[i];
 			
 			//escapes font name constituted of multiple words
 			if (fontName.indexOf(" ") != -1)
@@ -2220,7 +2279,7 @@ class UnitManager
 		
 		switch (value)
 		{
-			case Cursor.auto:
+			case Cursor.cssAuto:
 				cssCursorValue = "auto";
 				
 			case Cursor.crosshair:
@@ -2443,7 +2502,7 @@ class UnitManager
 			case cm(centimetersValue):
 				cssLength = Std.string(centimetersValue) + "cm";
 				
-			case _in(inchesValue):
+			case cssIn(inchesValue):
 				cssLength = Std.string(inchesValue) + "in";
 				
 			case em(emValue	):

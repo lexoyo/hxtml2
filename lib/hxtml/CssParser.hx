@@ -191,21 +191,22 @@ class CssParser<DisplayObjectType> {
 				var val = (v.length == 6) ? Std.parseInt("0x" + v) : ((v.length == 3) ? Std.parseInt("0x"+v.charAt(0)+v.charAt(0)+v.charAt(1)+v.charAt(1)+v.charAt(2)+v.charAt(2)) : null);
 				s.setBgColorNum(d, val);
 				return true;
-			case VIdent(i):
-				s.setBgColorKeyword(d, i);
+			case VIdent(i): 
+				s.setBgColorKey(d, i);
 				return true;
 			default:
 			}
 		case "background-repeat":
-			s.setBgRepeat(d, getIdent(v));
+			// TODO: multiple URLs
+			s.setBgRepeat(d, [getIdent(v)]);
 			return true;
 		case "background-image":
 			switch( v ) {
 			case VUrl(url):
-				s.setBgImage(d, url);
+				s.setBgImage(d, [url]);
 				return true;
 			case VIdent(i):
-				s.setBgImage(d, i);
+				s.setBgImage(d, [i]);
 				return true;
 			default:
 			}
@@ -226,7 +227,7 @@ class CssParser<DisplayObjectType> {
 				return true;
 			}
 			// keyword (top, center, bottom)
-			s.setBgPosYKeyword (d, getIdent(v));
+			s.setBgPosYKey (d, getIdent(v));
 			return true;
 		case "-inner-bgpos-left":
 			// percent or pixels
@@ -236,7 +237,7 @@ class CssParser<DisplayObjectType> {
 				return true;
 			}
 			// keyword (left, center, right)
-			s.setBgPosXKeyword (d, getIdent(v));
+			s.setBgPosXKey (d, getIdent(v));
 			return true;
 		case "background":
 			return applyComposite(["background-color", "background-image", "background-repeat", "background-attachment", "background-position"], v, s);
@@ -257,7 +258,7 @@ class CssParser<DisplayObjectType> {
 			// case label (normal, lighter, bold, bolder)
 			var val = getIdent(v);
 			if ( val != null ) {
-				s.setFontWeightKeyword(d, val);
+				s.setFontWeightKey(d, val);
 				return true;
 			}
 			// case int
@@ -271,7 +272,7 @@ class CssParser<DisplayObjectType> {
 			// case label (normal, lighter, bold, bolder)
 			var val = getIdent(v);
 			if ( val != null ) {
-				s.setFontSizeKeyword(d, val);
+				s.setFontSizeKey(d, val);
 				return true;
 			}
 			// case int
@@ -304,7 +305,7 @@ class CssParser<DisplayObjectType> {
 				s.setTextColorNum(d, val);
 				return true;
 			case VIdent(i):
-				s.setTextColorKeyword(d, i);
+				s.setTextColorKey(d, i);
 				return true;
 			default:
 			}
@@ -323,7 +324,7 @@ class CssParser<DisplayObjectType> {
 			// case label (normal)
 			var val = getIdent(v);
 			if ( val != null) {
-				s.setLineHeightKeyword(d, val);
+				s.setLineHeightKey(d, val);
 				return true;
 			}
 			// case int
@@ -332,6 +333,63 @@ class CssParser<DisplayObjectType> {
 				s.setLineHeightNum(d, l.value, l.unit);
 				return true;
 			}
+//---------------------
+		case "top":
+			// case label (e.g. auto)
+			var val = getIdent(v);
+			if ( val != null) {
+				s.setTopKey(d, val);
+				return true;
+			}
+			// case int
+			var l = getValueObject(v);
+			if( l != null ) {
+				s.setTop(d, l.value, l.unit);
+				return true;
+			}
+			return true;
+		case "left":
+			// case label (e.g. auto)
+			var val = getIdent(v);
+			if ( val != null) {
+				s.setLeftKey(d, val);
+				return true;
+			}
+			// case int
+			var l = getValueObject(v);
+			if( l != null ) {
+				s.setLeft(d, l.value, l.unit);
+				return true;
+			}
+			return true;
+		case "right":
+			// case label (e.g. auto)
+			var val = getIdent(v);
+			if ( val != null) {
+				s.setRightKey(d, val);
+				return true;
+			}
+			// case int
+			var l = getValueObject(v);
+			if( l != null ) {
+				s.setRight(d, l.value, l.unit);
+				return true;
+			}
+			return true;
+		case "bottom":
+			// case label (e.g. auto)
+			var val = getIdent(v);
+			if ( val != null) {
+				s.setBottomKey(d, val);
+				return true;
+			}
+			// case int
+			var l = getValueObject(v);
+			if( l != null ) {
+				s.setBottom(d, l.value, l.unit);
+				return true;
+			}
+			return true;
 //---------------------
 		case "display":
 			s.setDisplay(d, getIdent(v));

@@ -7,10 +7,12 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 To read the license please visit http://www.gnu.org/copyleft/gpl.html
 */
-package cocktailCore.font.abstract;
+package cocktail.core.font;
 
-import cocktail.font.FontData;
-import cocktailCore.font.FontLoader;
+import cocktail.core.font.FontData;
+import cocktail.core.FontLoader;
+import cocktail.core.NativeElement;
+import cocktail.core.style.StyleData;
 
 /**
  * This class is the manager for system and embedded fonts. Use it to load new fonts, or to check if a system font is supported, etc.
@@ -113,9 +115,88 @@ class AbstractFontManager
 		
 		return false;
 	}
+	
+	/**
+	 * Returns metrics for a given
+	 * font and font size
+	 */
+	public function getFontMetrics(fontFamily:String, fontSize:Float):FontMetricsData
+	{
+		throw ("Virtual method should be implemented in sub class");
+		return null;
+	}
+	
+	/**
+	 * create a runtime specific text display
+	 * element for the provided text string
+	 * and the styles that were computed for
+	 * this text
+	 * 
+	 * TODO : maybe should be on TextRenderer instead ?
+	 */
+	public function createNativeTextElement(text:String, computedStyle:ComputedStyleData):NativeElement
+	{
+		throw ("Virtual method should be implemented in sub class");
+		return null;
+	}
+	
+	/**
+	 * Transform a text letters into uppercase, lowercase
+	 * or capitalise them (only the first letter of each word
+	 * is transformed to uppercase), based on the textTransform
+	 * style of this container HTMLElement
+	 */
+	private function applyTextTransform(text:String, textTransform:TextTransform):String
+	{
+		switch (textTransform)
+		{
+			case uppercase:
+				text = text.toUpperCase();
+				
+			case lowercase:
+				text = text.toLowerCase();
+				
+			case capitalize:
+				text = capitalizeText(text);
+				
+			case none:
+		}
+		
+		return text;
+	}
+	
+	/**
+	 * Capitalise a text (turn each first letter
+	 * of a word to uppercase)
+	 * 
+	 * TODO : doesn't work
+	 */
+	public function capitalizeText(text:String):String
+	{
+		var capitalizedText:String = text.charAt(0);
+		
+		/**
+		 * loop in all charachter looking for word breaks
+		 * and capitalize each word's first letter
+		 */
+		for (i in 1...text.length)
+		{	
+			if (text.charAt(i - 1) == " ")
+			{
+				capitalizedText += text.charAt(i).toUpperCase();
+			}
+			else
+			{
+				capitalizedText += text.charAt(i);
+			}
+		}
+		return capitalizedText;
+	}
+	
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// Private methods, font loading callbacks
 	//////////////////////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * A font has been loaded
 	 */
