@@ -35,12 +35,21 @@ class TestJS {
 		browser = new Browser<Node>(Lib.document.createElement, Lib.document.createTextNode, appendChild, setAttribute, invalidate, s);
 
 		// load the html
-	    var r = new haxe.Http(url);
+	/*    var r = new haxe.Http(url);
 		r.onData = function(data) {
 			onLoaded(data);
 		};
+		 
 //	    r.onError = js.Lib.alert;
 	    r.request(false);
+		 */
+		 
+		 // embed the html
+		 onLoaded('<div style="position : absolute; width : 600px; height : 400px; left : 0px; top : 0px; " id="render">
+<html><head></head><body><div style=""><img src="test.png" style="margin-left: 50px;" />
+	</div>
+	<p style="display: block;">Test 001</p>
+	</body></html></div>');
 
 	}
 	/**
